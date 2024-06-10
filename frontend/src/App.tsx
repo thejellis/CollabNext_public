@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
-import { ChakraProvider } from '@chakra-ui/react';
+import {ChakraProvider} from '@chakra-ui/react';
 
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
@@ -15,7 +15,7 @@ function App() {
           <Route path='/' element={<Home />}></Route>
         </Routes>
       </Router>
-      {/* <Footer /> */}
+      <Footer />
     </ChakraProvider>
   );
 }

@@ -5,3 +5,7 @@
   box-sizing: border-box;
   font-family: 'DM Sans', sans-serif;
 }
+
+input:focus {
+  outline: none;
+}

@@ -21,7 +21,7 @@ const Navbar = () => {
       <Flex>
         {['Home', 'About Us', 'People', 'Technology', 'Data Sources'].map(
           (navTitle) => (
-            <Text mr='2.5rem' color='#000000'>
+            <Text key={navTitle} mr='2.5rem' color='#000000'>
               {navTitle}
             </Text>
           ),
