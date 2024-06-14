@@ -1,8 +1,16 @@
 import React from 'react';
 
 import {Box, Button, Flex, Input, SimpleGrid, Text} from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+
+  const navigate = useNavigate();
+
+  const handleSearch = () => {
+    // Define the path you want to navigate to
+    navigate('/search');
+  };
   return (
     <Box w='700px' mx='auto' mt='1.5rem'>
       <Text fontFamily='DM Sans' fontSize='22px' color='#000000'>
@@ -70,6 +78,7 @@ const Home = () => {
             fontSize='18px'
             color='#FFFFFF'
             fontWeight={'500'}
+            onClick={handleSearch}
           >
             Search
           </Button>
