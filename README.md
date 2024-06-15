@@ -5,7 +5,7 @@
 https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-and-python-backend-together-on-the-same/ba-p/4095567
 
 
-## Building React.js/Flask application locally:
+## Building React.js/Flask application (folder : collabnextapp) locally:
 
 1. Python setup<br>
 `python3 -m venv .venv`<br>
