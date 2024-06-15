@@ -7,12 +7,15 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-an
 
 ## Building React.js/Flask application (folder : collabnextapp) locally:
 
-1. Python setup<br>
+1. Change directory to collabnextapp<br>
+`cd collabnextapp`<br>
+
+2. Python setup<br>
 `python3 -m venv .venv`<br>
 `source .venv/bin/activate`<br>
 `pip install -r requirements.txt`<br>
 
-2. React build
+3. React build
 `npm run build`
 
     The build folder is ready to be deployed.
@@ -21,7 +24,7 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-an
     `npm install -g serve`<br>
     `serve -s build`
  
-3. Run locally 
+4. Run locally 
  To run the Flask application locally, you need to execute the Python script containing your Flask application 
 
    `python app.py`
