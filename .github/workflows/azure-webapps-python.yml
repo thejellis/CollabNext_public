@@ -16,6 +16,7 @@ env:
   WORKING_DIRECTORY: 'collabnextapp'        # set this to the path to your path of working directory inside github repository, defaults to the repository root
   PYTHON_VERSION: '3.10'        # set the version to use
   STARTUP_COMMAND: ''           # set this to the startup command required to start the gunicorn server. default it is empty
+  NODE_VERSION: '20.x'
 
 jobs:
  build-and-deploy:
@@ -30,6 +31,15 @@ jobs:
     with:
      python-version: ${{ env.PYTHON_VERSION }}
   # install dependencies
+  - name: Set up Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: ${{ env.NODE_VERSION }}
+      cache: 'npm'
+  - name: npm install, build, and test
+    run: |
+      npm install
+      npm run build
   - name: python install
     working-directory: ${{ env.WORKING_DIRECTORY }}
     run: |
