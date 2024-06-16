@@ -29,5 +29,8 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-an
 
    `python app.py`
 
+Note: If you are having some trouble with the ports on Mac, try:
+System Settings > General > AirDrop & Handoff > turn off AirPlay Receiver
+
 
 
