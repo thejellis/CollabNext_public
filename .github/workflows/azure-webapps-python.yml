@@ -37,6 +37,7 @@ jobs:
       node-version: ${{ env.NODE_VERSION }}
       cache: 'npm'
   - name: npm install, build, and test
+    working-directory: ${{ env.WORKING_DIRECTORY }}
     run: |
       npm install
       npm run build
