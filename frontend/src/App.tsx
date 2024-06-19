@@ -5,6 +5,7 @@ import {Box, ChakraProvider} from '@chakra-ui/react';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import NavbarMobile from './components/NavbarMobile';
+import About from './pages/About';
 import Home from './pages/Home';
 
 function App() {
@@ -20,6 +21,9 @@ function App() {
         <Box>
           <Routes>
             <Route path='/' element={<Home />}></Route>
+          </Routes>
+          <Routes>
+            <Route path='/about' element={<About />}></Route>
           </Routes>
         </Box>
         <Footer />
