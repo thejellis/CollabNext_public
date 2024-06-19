@@ -43,7 +43,7 @@ const NavbarMobile = () => {
                 },
                 {
                   title: 'About Us',
-                  href: '/',
+                  href: '/about',
                 },
                 {
                   title: 'People',

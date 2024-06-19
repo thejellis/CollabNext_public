@@ -1,4 +1,5 @@
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 import {Flex, Text} from '@chakra-ui/react';
 
@@ -19,13 +20,17 @@ const Navbar = () => {
         CollabNext
       </Text>
       <Flex>
-        {['Home', 'About Us', 'People', 'Technology', 'Data Sources'].map(
-          (navTitle) => (
-            <Text key={navTitle} mr='2.5rem' color='#000000'>
-              {navTitle}
-            </Text>
-          ),
-        )}
+        {[
+          {text: 'Home', href: '/'},
+          {text: 'About Us', href: '/about'},
+          {text: 'People', href: '/'},
+          {text: 'Technology', href: '/'},
+          {text: 'Data Sources', href: '/'},
+        ].map(({text, href}) => (
+          <Text key={text} mr='2.5rem' color='#000000'>
+            <Link to={href}>{text}</Link>
+          </Text>
+        ))}
       </Flex>
       <Text fontSize='20px' color='#000000'>
         Account
