@@ -46,8 +46,15 @@ const About = () => {
             originated as a partnership between Georgia Tech and the Atlanta
             University Center, and is now being developed jointly by Fisk
             University, Georgia Tech, Morehouse College, Texas Southern
-            University, and University at Buffalo with support from the NSF TIP
-            Directorate .
+            University, and University at Buffalo with{' '}
+            <a
+              href='https://www.nsf.gov/awardsearch/advancedSearchResult?ActiveAwards=true&AwardAmount=&AwardInstrument=&AwardNumberOperator=&BooleanElement=Any&BooleanRef=All&ExpDateOperator=&Keyword=Proto-OKN&OriginalAwardDateFrom=08%2F01%2F2023&OriginalAwardDateOperator=Range&OriginalAwardDateTo=09%2F22%2F2023&PICountry=&PIFirstName=&PIId=&PILastName=&PIOrganization=&PIState=&PIZip=&ProgEleCode=223Y%2C+X289&ProgOfficer=&ProgOrganization=&ProgRefCode=&Program=&StartDateOperator=&utm_medium=email&utm_source=govdelivery'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              support from the NSF TIP Directorate.
+            </a>
           </Text>
         </Box>
         <Box mt='1.7rem'>
