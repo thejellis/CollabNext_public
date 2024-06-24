@@ -30,21 +30,18 @@ def get_institutions():
 @app.route('/get-topics', methods=['POST'])
 def get_topics():
   selected_institution = request.json.get('selectedOption')
-  query1 = """
+  query1 = f"""
   PREFIX org: <http://www.w3.org/ns/org#>
-  SELECT DISTINCT ?name WHERE {
-      ?institution <http://xmlns.com/foaf/0.1/name> """
-  query2 = """ .
+  SELECT DISTINCT ?name WHERE {'{'}
+      ?institution <http://xmlns.com/foaf/0.1/name> "{selected_institution}".
       ?institution a <https://semopenalex.org/ontology/Institution> .
       ?author org:memberOf ?institution .
       ?work <http://purl.org/dc/terms/creator> ?author .
-      ?work <https://semopenalex.org/ontology/hasConcept> ?concept .
+      << ?work <https://semopenalex.org/ontology/hasTopic> ?concept >> ?p ?o .
       ?concept <http://www.w3.org/2004/02/skos/core#prefLabel> ?name .
-  } LIMIT 3
+  {'}'} LIMIT 3
   """
-  name = "\'" + str(selected_institution) + "\'"
-  full_query = query1 + name + query2
-  query_response = sparql_query(full_query, False, True)
+  query_response = sparql_query(query1, False, True)
   return {'one': str(query_response[0]), 'two': str(query_response[1]), 'three': str(query_response[2])}
 
 @app.route('/get-authors', methods=['POST'])
@@ -65,7 +62,7 @@ def get_authors():
   query1 = """PREFIX org: <http://www.w3.org/ns/org#>
   SELECT DISTINCT ?name WHERE {
   ?work <http://purl.org/dc/terms/creator> ?author .
-  ?work <https://semopenalex.org/ontology/hasConcept> ?topic .
+  << ?work <https://semopenalex.org/ontology/hasTopic> ?concept >> ?p ?o .
   ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> 
   """
   query2 = """ .
