@@ -54,21 +54,30 @@ const MainNavigation = () => {
       <div className="content">
         {isNetworkMap ? (
           <div className="network-map">
+          <button className='topButton'>Network Map</button>
             <img src={NetworkMap} alt="Network Map" />
           </div>
         ) : (
           <div className="list-map">
-            <h2>{universityName}</h2>
-            <a href="http://ror.org/rorid">RORID</a><br />
-            <a href="http://example.com">URL</a>
-            <p>Total 20 people</p>
-            <p>Total 50 works</p>
-            <p>Total 70 citations</p>
-            <p>Medicine: 200 people, 3000 works</p>
-            <p>Engineering: 112 people, 2700 works</p>
-            <p>Agriculture: 145 people, 2810 works</p>
-            <a href="http://openalex.org">View on OpenAlex</a>
+            <div>
+              <button className='topButton'>List Map</button>
+              <h2>{universityName}</h2>
+              <a href="http://ror.org/rorid">RORID</a><br />
+              <a href="http://example.com">URL</a>
+              <p>Total 20 people</p>
+              <p>Total 50 works</p>
+              <p>Total 70 citations</p>
+              <a href="http://openalex.org">View on OpenAlex</a>
+            </div>
+            <div className='dep-content'>
+              <p>Medicine: 200 people, 3000 works</p>
+              <p>Engineering: 112 people, 2700 works</p>
+              <p>Agriculture: 145 people, 2810 works</p>
+            </div>
+            
           </div>
+
+          
         )}
       </div>
     </div>

@@ -1,8 +1,8 @@
 import {AnimatePresence, motion} from 'framer-motion';
-import {Squash as Hamburger} from 'hamburger-react';
+// import {Squash as Hamburger} from 'hamburger-react';
 import {useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
-import {useClickAway} from 'react-use';
+// import {useClickAway} from 'react-use';
 
 import {Flex, Text} from '@chakra-ui/react';
 
@@ -10,12 +10,12 @@ const NavbarMobile = () => {
   const [isOpen, setOpen] = useState(false);
   const ref = useRef(null);
 
-  useClickAway(ref, () => setOpen(false));
+  // useClickAway(ref, () => setOpen(false));
 
   return (
     <div ref={ref} className='lg-hidden'>
       <Flex justifyContent={'space-between'} alignItems={'center'}>
-        <Hamburger toggled={isOpen} size={20} toggle={setOpen} />
+        {/* <Hamburger toggled={isOpen} size={20} toggle={setOpen} /> */}
         <Text
           fontFamily='DM Sans'
           fontSize='14px'

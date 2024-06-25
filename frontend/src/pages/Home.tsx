@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Box, Button, Flex, Input, SimpleGrid, Text} from '@chakra-ui/react';
+import {Box, Button, Flex, Input, Link, SimpleGrid, Text} from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -8,9 +8,12 @@ const Home = () => {
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    // Define the path you want to navigate to
     navigate('/search');
   };
+
+  const handleContact = () =>{
+    navigate('/aboutus')
+  }
   return (
     <Box w={{lg: '700px'}} mx='auto' mt='1.5rem'>
       <Text
@@ -91,6 +94,7 @@ const Home = () => {
           >
             Search
           </Button>
+          <Link onClick={handleContact}>Hello</Link>
         </Flex>
       </Box>
     </Box>
