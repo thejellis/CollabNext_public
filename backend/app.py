@@ -50,7 +50,7 @@ def get_authors():
   selected_institution = request.json.get('selectedOption')
   queryA = """PREFIX org: <http://www.w3.org/ns/org#>
   SELECT DISTINCT ?institution WHERE {
-  ?institution <http://xmlns.com/foaf/0.1/name> 
+  ?institution <http://xmlns.com/foaf/0.1/name>
   """
   queryB = """ .
   ?institution a <https://semopenalex.org/ontology/Institution>
@@ -63,10 +63,10 @@ def get_authors():
   SELECT DISTINCT ?name WHERE {
   ?work <http://purl.org/dc/terms/creator> ?author .
   << ?work <https://semopenalex.org/ontology/hasTopic> ?concept >> ?p ?o .
-  ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> 
+  ?topic <http://www.w3.org/2004/02/skos/core#prefLabel>
   """
   query2 = """ .
-  ?author org:memberOf 
+  ?author org:memberOf
   """
   query3 = """ .
   ?author <http://xmlns.com/foaf/0.1/name> ?name .
@@ -98,4 +98,4 @@ def sparql_query(query, checkbox, list):
       return return_value
 
 if __name__ =='__main__':
-  app.run(); 
+  app.run();

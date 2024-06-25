@@ -1,10 +1,10 @@
-import {AnimatePresence, motion} from 'framer-motion';
-import {Squash as Hamburger} from 'hamburger-react';
-import {useRef, useState} from 'react';
-import {Link} from 'react-router-dom';
-import {useClickAway} from 'react-use';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Squash as Hamburger } from 'hamburger-react';
+import { useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useClickAway } from 'react-use';
 
-import {Flex, Text} from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 
 const NavbarMobile = () => {
   const [isOpen, setOpen] = useState(false);

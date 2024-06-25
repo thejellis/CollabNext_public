@@ -1,12 +1,14 @@
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import {Box, ChakraProvider} from '@chakra-ui/react';
+import { Box, ChakraProvider } from '@chakra-ui/react';
 
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import NavbarMobile from './components/NavbarMobile';
 import About from './pages/About';
+import ContactUs from './pages/Contact';
 import Home from './pages/Home';
+import Search from './pages/Search';
 
 function App() {
   return (
@@ -24,6 +26,12 @@ function App() {
           </Routes>
           <Routes>
             <Route path='/about' element={<About />}></Route>
+          </Routes>
+          <Routes>
+            <Route path='/search' element={<Search />}></Route>
+          </Routes>
+          <Routes>
+            <Route path='/contact' element={<ContactUs />}></Route>
           </Routes>
         </Box>
         <Footer />

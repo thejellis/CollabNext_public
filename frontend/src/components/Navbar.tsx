@@ -1,7 +1,7 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import {Flex, Text} from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 
 const Navbar = () => {
   return (
