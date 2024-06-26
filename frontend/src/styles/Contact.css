@@ -1,27 +1,40 @@
-.container{
+.container {
     background: linear-gradient(#053257, #7e7e7e);
-    padding-top: 1rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-bottom: 1rem;
+    padding: 1rem;
     border-radius: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    width: 800px;
+    width: 90%;
+    max-width: 800px;
     margin: auto;
     color: white;
     height: fit-content;
-    /* margin-top: 150px; */
     border: none;
     line-height: 2;
 }
 
-.heading h1{
-    margin-left: 560px;
-    padding-bottom: 20px;
-    padding-top: 20px;
+.heading h1 {
+    text-align: center;
+    padding: 20px 0;
     font-size: 1.3em;
 }
 
-.city{
+.city {
     font-weight: bold;
+}
+
+/* Media query for screens smaller than 600px */
+@media (max-width: 600px) {
+    .container {
+        width: 100%;
+        padding: 0.5rem;
+    }
+
+    .heading h1 {
+        font-size: 1.1em;
+        padding: 10px 0;
+    }
+
+    .container p {
+        font-size: 0.9em;
+    }
 }
