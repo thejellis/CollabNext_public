@@ -9,4 +9,5 @@ export interface ResearchDataInterface {
   url: string;
   worksAreTopics: boolean;
   worksAreAuthors: boolean;
+  link: string;
 }

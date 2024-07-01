@@ -16,90 +16,6 @@ def update_text():
   query_response = sparql_query(input_text, isChecked, False)
   return {'updatedText': input_text, 'queryResults': query_response}
 
-@app.route('/get-institutions', methods=['POST'])
-def get_institutions():
-  query = """
-  SELECT ?name WHERE {
-      ?institution a <https://semopenalex.org/ontology/Institution> .
-      ?institution <http://xmlns.com/foaf/0.1/name> ?name
-  } LIMIT 3
-  """
-  query_response = sparql_query(query, False, True)
-  return {'one': str(query_response[0]), 'two': str(query_response[1]), 'three': str(query_response[2])}
-
-@app.route('/get-topics', methods=['POST'])
-def get_topics():
-  selected_institution = request.json.get('selectedOption')
-  query1 = """
-  PREFIX org: <http://www.w3.org/ns/org#>
-  SELECT DISTINCT ?name WHERE {
-      ?institution <http://xmlns.com/foaf/0.1/name> """
-  query2 = """ .
-      ?institution a <https://semopenalex.org/ontology/Institution> .
-      ?author org:memberOf ?institution .
-      ?work <http://purl.org/dc/terms/creator> ?author .
-      ?work <https://semopenalex.org/ontology/hasConcept> ?concept .
-      ?concept <http://www.w3.org/2004/02/skos/core#prefLabel> ?name .
-  } LIMIT 3
-  """
-  name = "\'" + str(selected_institution) + "\'"
-  full_query = query1 + name + query2
-  query_response = sparql_query(full_query, False, True)
-  return {'one': str(query_response[0]), 'two': str(query_response[1]), 'three': str(query_response[2])}
-
-@app.route('/get-authors', methods=['POST'])
-def get_authors():
-  selected_topic = request.json.get('selectedTopicOption')
-  selected_institution = request.json.get('selectedOption')
-  queryA = """PREFIX org: <http://www.w3.org/ns/org#>
-  SELECT DISTINCT ?institution WHERE {
-  ?institution <http://xmlns.com/foaf/0.1/name>
-  """
-  queryB = """ .
-  ?institution a <https://semopenalex.org/ontology/Institution>
-  } LIMIT 3
-  """
-  instQuery = queryA + "\'" + str(selected_institution) + "\'" + queryB
-  result = sparql_query(instQuery, False, True)
-  selected_institution = str(result[0])
-  query1 = """PREFIX org: <http://www.w3.org/ns/org#>
-  SELECT DISTINCT ?name WHERE {
-  ?work <http://purl.org/dc/terms/creator> ?author .
-  ?work <https://semopenalex.org/ontology/hasConcept> ?topic .
-  ?topic <http://www.w3.org/2004/02/skos/core#prefLabel>
-  """
-  query2 = """ .
-  ?author org:memberOf
-  """
-  query3 = """ .
-  ?author <http://xmlns.com/foaf/0.1/name> ?name .
-  } LIMIT 5
-  """
-  name_topic = "\'" + str(selected_topic) + "\'"
-  name_institution = "<" + str(selected_institution) + ">"
-  full_query = query1 + name_topic + query2 + name_institution + query3
-  query_response = sparql_query(full_query, False, False)
-  return {'authors': query_response}
-
-def sparql_query(query, checkbox, list):
-  if not checkbox:
-      endpoint_url = "https://semopenalex.org/sparql"
-  else:
-      endpoint_url = "https://frink.apps.renci.org/semopenalex/sparql"
-  response = requests.post(endpoint_url, data={"query": query}, headers={'Accept': 'application/json'})
-  return_value = []
-  data = response.json()
-  for object in data['results']['bindings']:
-      for entry in object:
-          return_value.append(object[entry]['value'])
-  if not list:
-      return_string = ''
-      for a in return_value:
-          return_string = return_string + str(a) + ', '
-      return return_string
-  else:
-      return return_value
-
 ### NEW API CALLS
 
 @app.route('/initial-search', methods=['POST'])
@@ -147,13 +63,13 @@ def get_authors(institution, topic):
 
       SELECT DISTINCT ?name
       WHERE {'{'}
-        ?institution foaf:name '{institution}' .
-        ?topic skos:prefLabel '{topic}' .
+        ?institution foaf:name "{institution}" .
+        ?topic skos:prefLabel "{topic}" .
         ?author <http://www.w3.org/ns/org#memberOf> ?institution .
         ?work dct:creator ?author .
         << ?work soa:hasTopic ?topic >> ?p ?o .
         ?author foaf:name ?name .
-      {'}'}
+      {'}'} LIMIT 5
       """
       results = query_endpoint(query)
       authors = []
@@ -236,7 +152,7 @@ def get_works(author, topic, institution):
 
 def get_institution_metadata(institution):
   query = f"""
-  SELECT ?ror ?workscount ?citedcount ?homepage (COUNT(distinct ?people) as ?peoplecount)
+  SELECT ?ror ?workscount ?citedcount ?homepage ?institution (COUNT(distinct ?people) as ?peoplecount)
   WHERE {'{'}
   ?institution <http://xmlns.com/foaf/0.1/name> "{institution}" .
   ?institution <https://semopenalex.org/ontology/ror> ?ror .
@@ -244,7 +160,7 @@ def get_institution_metadata(institution):
   ?institution <https://semopenalex.org/ontology/citedByCount> ?citedcount .
   ?institution <http://xmlns.com/foaf/0.1/homepage> ?homepage .
   ?people <http://www.w3.org/ns/org#memberOf> ?institution .
-  {'}'} GROUP BY ?ror ?workscount ?citedcount ?homepage
+  {'}'} GROUP BY ?ror ?workscount ?citedcount ?homepage ?institution
   """
   results = query_endpoint(query)
   ror = results[0]['ror']
@@ -252,13 +168,15 @@ def get_institution_metadata(institution):
   cited_count = results[0]['citedcount']
   homepage = results[0]['homepage']
   author_count = results[0]['peoplecount']
-  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count}
+  oa_link = results[0]['institution']
+  oa_link = oa_link.replace('semopenalex', 'openalex').replace('institution', 'institutions')
+  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link}
 
 def get_topic_metadata(topic):
    query = f"""
     PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-    SELECT DISTINCT ?works_count ?cited_by_count ?note
+    SELECT DISTINCT ?works_count ?cited_by_count ?note ?topic
     WHERE {'{'}
         ?topic skos:prefLabel "{topic}" .
         ?topic <https://semopenalex.org/ontology/worksCount> ?works_count .
@@ -270,12 +188,13 @@ def get_topic_metadata(topic):
    works_count = results[0]['works_count']
    cited_by_count = results[0]['cited_by_count']
    description = results[0]['note']
-
-   return {"works_count": works_count, "cited_by_count": cited_by_count, "description": description}
+   oa_link = results[0]['topic']
+   oa_link = oa_link.replace('semopenalex', 'openalex').replace('topic', 'topics')
+   return {"works_count": works_count, "cited_by_count": cited_by_count, "description": description, "oa_link": oa_link}
 
 def get_author_metadata(author):
    query = f"""
-    SELECT ?cite_count ?orcid ?works_count ?current_institution_name
+    SELECT ?cite_count ?orcid ?works_count ?current_institution_name ?author
     WHERE {'{'}
     ?author <http://xmlns.com/foaf/0.1/name> "{author}" .
     ?author <https://semopenalex.org/ontology/citedByCount> ?cite_count .
@@ -290,8 +209,9 @@ def get_author_metadata(author):
    orcid = results[0]['orcid']
    work_count = results[0]['works_count']
    current_institution = results[0]['current_institution_name']
-
-   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution}
+   oa_link = results[0]['author']
+   oa_link = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
+   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution, "oa_link": oa_link}
 
 def query_endpoint(query):
   endpoint_url = "https://semopenalex.org/sparql"

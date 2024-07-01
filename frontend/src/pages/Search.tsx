@@ -1,14 +1,14 @@
 import '../styles/Search.css';
 
-import React, { useEffect, useState } from 'react';
-import { Circles } from 'react-loader-spinner';
-import { useSearchParams } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Circles} from 'react-loader-spinner';
+import {useSearchParams} from 'react-router-dom';
 
-import { Box, Button, Text, useToast } from '@chakra-ui/react';
+import {Box, Button, Text, useToast} from '@chakra-ui/react';
 
 import NetworkMap from '../assets/NetworkMap.png';
-import { baseUrl } from '../utils/constants';
-import { ResearchDataInterface } from '../utils/interfaces';
+import {baseUrl} from '../utils/constants';
+import {ResearchDataInterface} from '../utils/interfaces';
 
 const initialValue = {
   cited_count: '',
@@ -21,6 +21,7 @@ const initialValue = {
   url: '',
   worksAreTopics: false,
   worksAreAuthors: false,
+  link: '',
 };
 
 const Search = () => {
@@ -91,6 +92,7 @@ const Search = () => {
               url: data?.homepage || data?.orcid,
               worksAreAuthors: false,
               worksAreTopics: false,
+              link: data?.oa_link,
             });
             setIsLoading(false);
           })
@@ -144,6 +146,9 @@ const Search = () => {
             url:
               data?.author_metadata?.orcid ||
               data?.institution_metadata?.homepage,
+            link:
+              data?.author_metadata?.oa_link ||
+              data?.institution_metadata?.oa_link,
           });
           setIsLoading(false);
         })
@@ -278,7 +283,7 @@ const Search = () => {
                 )}
                 <p>Total {data?.works_count} works</p>
                 <p>Total {data?.cited_count} citations</p>
-                <a target='_blank' rel='noreferrer' href='http://openalex.org'>
+                <a target='_blank' rel='noreferrer' href={data?.link}>
                   View on OpenAlex
                 </a>
               </div>
@@ -301,6 +306,11 @@ const Search = () => {
                         : 'default'
                     }
                     key={eachWork}
+                    textDecoration={
+                      data?.worksAreTopics || data?.worksAreAuthors
+                        ? 'underline'
+                        : 'none'
+                    }
                   >
                     {eachWork}
                   </Text>
