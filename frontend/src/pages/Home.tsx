@@ -10,12 +10,14 @@ import {
 	FormControl,
 	FormErrorMessage,
 	Input,
+	Select,
 	SimpleGrid,
 	Text,
+	useToast,
 } from '@chakra-ui/react';
 
 const validateSchema = Yup.object().shape({
-  institution: Yup.string().required('This field is required'),
+  institution: Yup.string().notRequired(),
   type: Yup.string().notRequired(),
   topic: Yup.string().notRequired(),
   researcher: Yup.string().notRequired(),
@@ -23,13 +25,14 @@ const validateSchema = Yup.object().shape({
 
 const initialValues = {
   institution: '',
-  type: '',
+  type: 'Education',
   topic: '',
   researcher: '',
 };
 
 const Home = () => {
   const navigate = useNavigate();
+  const toast = useToast();
   return (
     <Box w={{lg: '700px'}} mx='auto' mt='1.5rem'>
       <Text
@@ -56,8 +59,19 @@ const Home = () => {
             console.log(`type: ${type}`);
             console.log(`topic: ${topic}`);
             console.log(`researcher: ${researcher}`);
+            if (!institution && !topic && !researcher) {
+              toast({
+                title: 'Error',
+                description: 'All 3 fields cannot be empty',
+                status: 'error',
+                duration: 8000,
+                isClosable: true,
+                position: 'top-right',
+              });
+              return;
+            }
             navigate(
-              `?institution=${institution}&type=${type}&topic=${topic}&researcher=${researcher}`,
+              `search?institution=${institution}&type=${type}&topic=${topic}&researcher=${researcher}`,
             );
           }}
         >
@@ -69,7 +83,7 @@ const Home = () => {
               >
                 {[
                   {text: 'Organization', key: 'institution'},
-                  {text: 'Institution Type', key: 'type'},
+                  {text: 'Type', key: 'type'},
                 ].map(({text, key}) => (
                   <Box key={text}>
                     <Field name={key}>
@@ -77,15 +91,30 @@ const Home = () => {
                         <FormControl
                           isInvalid={form.errors[key] && form.touched[key]}
                         >
-                          <Input
-                            variant={'flushed'}
-                            focusBorderColor='white'
-                            borderBottomWidth={'2px'}
-                            color='white'
-                            fontSize={{lg: '20px'}}
-                            textAlign={'center'}
-                            {...field}
-                          />
+                          {text === 'Organization' ? (
+                            <Input
+                              variant={'flushed'}
+                              focusBorderColor='white'
+                              borderBottomWidth={'2px'}
+                              color='white'
+                              fontSize={{lg: '20px'}}
+                              textAlign={'center'}
+                              {...field}
+                            />
+                          ) : (
+                            <Select
+                              variant={'flushed'}
+                              focusBorderColor='white'
+                              borderBottomWidth={'2px'}
+                              color='white'
+                              fontSize={{lg: '20px'}}
+                              textAlign={'center'}
+                              {...field}
+                              // placeholder='Select option'
+                            >
+                              <option value='Education'>Education</option>
+                            </Select>
+                          )}
                           <FormErrorMessage>
                             {form.errors[key]}
                           </FormErrorMessage>
