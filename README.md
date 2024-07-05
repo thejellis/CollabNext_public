@@ -14,10 +14,10 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-an
 `python3 -m venv .venv`<br>
 `source .venv/bin/activate`<br>
 
-If this command doesn't work on windows try going to the directory: <br>
-`cd .venv\Scripts` <br>
-`activate` <br>
-`cd ..` x2 <br>
+ If this command doesn't work on windows try going to the directory: <br>
+ `cd .venv\Scripts` <br>
+ `activate` <br>
+ `cd ..` x2 <br>
 
 `pip install -r requirements.txt`<br>
 
