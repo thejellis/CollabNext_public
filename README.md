@@ -13,6 +13,12 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-an
 2. Python setup<br>
 `python3 -m venv .venv`<br>
 `source .venv/bin/activate`<br>
+
+If this command doesn't work on windows try going to the directory: <br>
+`cd .venv\Scripts` <br>
+`activate` <br>
+`cd ..` x2 <br>
+
 `pip install -r requirements.txt`<br>
 
 3. Run Flask app locally<br>
