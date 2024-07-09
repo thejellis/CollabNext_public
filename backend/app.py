@@ -9,13 +9,6 @@ CORS(app)
 def index():
   return send_from_directory(app.static_folder, 'index.html')
 
-@app.route('/update-text', methods=['POST'])
-def update_text():
-  input_text = request.json.get('inputText')
-  isChecked = request.json.get('isChecked')
-  query_response = sparql_query(input_text, isChecked, False)
-  return {'updatedText': input_text, 'queryResults': query_response}
-
 ### NEW API CALLS
 
 @app.route('/initial-search', methods=['POST'])
@@ -25,32 +18,38 @@ def initial_search():
   type = request.json.get('type')
   topic = request.json.get('topic')
   if institution and researcher and topic:
-    works = get_works(researcher, topic, institution)
+    works, graph = get_works(researcher, topic, institution)
     institution_data = get_institution_metadata(institution)
     researcher_data = get_author_metadata(researcher)
     topic_data = get_topic_metadata(topic)
-    results = {"works": works, "institution_metadata": institution_data, "author_metadata": researcher_data, "topic_metadata": topic_data}
+    results = {"works": works, "institution_metadata": institution_data, "author_metadata": researcher_data, "topic_metadata": topic_data, "graph": graph}
   elif institution and researcher:
     institution_data = get_institution_metadata(institution)
     researcher_data = get_author_metadata(researcher)
-    topics = get_topics(researcher, institution)
-    results = {"topics": topics, "institution_metadata": institution_data, "author_metadata": researcher_data}
+    topics, graph = get_topics(researcher, institution)
+    results = {"topics": topics, "institution_metadata": institution_data, "author_metadata": researcher_data, "graph": graph}
   elif institution and topic:
-    authors = get_authors(institution, topic)
+    authors, graph = get_authors(institution, topic)
     institution_data = get_institution_metadata(institution)
     topic_data = get_topic_metadata(topic)
-    results = {"authors": authors, "institution_metadata": institution_data, "topic_metadata": topic_data}
+    results = {"authors": authors, "institution_metadata": institution_data, "topic_metadata": topic_data, "graph": graph}
   elif researcher and topic:
-    works = get_works(researcher, topic, "")
+    works, graph = get_works(researcher, topic, "")
     researcher_data = get_author_metadata(researcher)
     topic_data = get_topic_metadata(topic)
-    results = {"works": works, "author_metadata": researcher_data, "topic_metadata": topic_data}
+    results = {"works": works, "author_metadata": researcher_data, "topic_metadata": topic_data, "graph": graph}
   elif topic:
-    results = get_topic_metadata(topic)
+    data = get_topic_metadata(topic)
+    graph = [{ 'data': { 'id': topic, 'label': topic } }]
+    results = {"topic_metadata": data, "graph": graph}
   elif institution:
-    results = get_institution_metadata(institution)
+    data = get_institution_metadata(institution)
+    graph = [{ 'data': { 'id': institution, 'label': institution } }]
+    results = {"institution_metadata": data, "graph": graph}
   elif researcher:
-    results = get_author_metadata(researcher)
+    data = get_author_metadata(researcher)
+    graph = [{ 'data': { 'id': researcher, 'label': researcher } }]
+    results = {"author_metadata": data, "graph": graph}
   return results
 
 def get_authors(institution, topic):
@@ -69,13 +68,29 @@ def get_authors(institution, topic):
         ?work dct:creator ?author .
         << ?work soa:hasTopic ?topic >> ?p ?o .
         ?author foaf:name ?name .
-      {'}'} LIMIT 5
+      {'}'}
       """
       results = query_endpoint(query)
       authors = []
       for author in results:
          authors.append(author['name'])
-      return {"names": authors}
+
+      graph = []
+      institution_node = { 'data': { 'id': institution, 'label': institution } }
+      topic_node = { 'data': { 'id': topic, 'label': topic } }
+      graph.append(institution_node)
+      graph.append(topic_node)
+      for author_name in authors:
+        author_node = { 'data': { 'id': author_name, 'label': author_name } }
+        topic_edge = { 'data': { 'source': author_name, 'target': topic } }
+        institution_edge = { 'data': { 'source': author, 'target': institution } }
+        graph.append(author_node)
+        if not topic_edge in graph:
+          graph.append(topic_edge)
+        if not institution_edge in graph:
+          graph.append(institution_edge)
+
+      return {"names": authors}, graph
 
 def get_topics(author, institution):
    if author and institution:
@@ -100,7 +115,21 @@ def get_topics(author, institution):
       topics = []
       for topic in results:
          topics.append(topic['name'])
-      return {"names": topics}
+      
+      graph = []
+      institution_node = { 'data': { 'id': institution, 'label': institution } }
+      author_node = { 'data': { 'id': author, 'label': author } }
+      graph.append(institution_node)
+      graph.append(author_node)
+      graph.append( { 'data': { 'source': author_node, 'target': institution_node } })
+      for topic_name in topics:
+        topic_node = { 'data': { 'id': topic_name, 'label': topic_name } }
+        topic_edge = { 'data': { 'source': topic_name, 'target': author } }
+        graph.append(topic_node)
+        if not topic_edge in graph:
+          graph.append(topic_edge)
+      
+      return {"names": topics}, graph
 
 def get_works(author, topic, institution):
    if author and topic and institution:
@@ -126,7 +155,25 @@ def get_works(author, topic, institution):
       titles = []
       for title in results:
          titles.append(title['name'])
-      return {"titles": titles}
+      
+      graph = []
+      author_node = { 'data': { 'id': author, 'label': author } }
+      topic_node = { 'data': { 'id': topic, 'label': topic } }
+      institution_node = { 'data': { 'id': institution, 'label': institution } }
+      graph.append(author_node)
+      graph.append(topic_node)
+      graph.append(institution_node)
+      graph.append({ 'data': { 'source': author, 'target': institution } })
+      for work in titles:
+        work_node = { 'data': { 'id': work, 'label': work } }
+        work_edge = { 'data': { 'source': work, 'target': author } }
+        topic_edge = { 'data': { 'source': work, 'target': topic } }
+        graph.append(work_node)
+        graph.append(work_edge)
+        if not topic_edge in graph:
+          graph.append(topic_edge)
+
+      return {"titles": titles}, graph
    elif author and topic:
       query = f"""
       PREFIX soa: <https://semopenalex.org/ontology/>
@@ -147,7 +194,22 @@ def get_works(author, topic, institution):
       titles = []
       for title in results:
          titles.append(title['name'])
-      return {"titles": titles}
+
+      graph = []
+      author_node = { 'data': { 'id': author, 'label': author } }
+      topic_node = { 'data': { 'id': topic, 'label': topic } }
+      graph.append(author_node)
+      graph.append(topic_node)
+      for work in titles:
+        work_node = { 'data': { 'id': work, 'label': work } }
+        work_edge = { 'data': { 'source': work, 'target': author } }
+        topic_edge = { 'data': { 'source': work, 'target': topic } }
+        graph.append(work_node)
+        graph.append(work_edge)
+        if not topic_edge in graph:
+          graph.append(topic_edge)
+
+      return {"titles": titles}, graph
 
 
 def get_institution_metadata(institution):
@@ -226,4 +288,4 @@ def query_endpoint(query):
   return return_value
 
 if __name__ =='__main__':
-  app.run();
+  app.run()
