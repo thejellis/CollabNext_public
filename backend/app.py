@@ -41,15 +41,15 @@ def initial_search():
   elif topic:
     data = get_topic_metadata(topic)
     graph = [{ 'data': { 'id': topic, 'label': topic } }]
-    results = {"topic_metadata": data, "graph": graph}
+    results = {"metadata": data, "graph": graph}
   elif institution:
     data = get_institution_metadata(institution)
     graph = [{ 'data': { 'id': institution, 'label': institution } }]
-    results = {"institution_metadata": data, "graph": graph}
+    results = {"metadata": data, "graph": graph}
   elif researcher:
     data = get_author_metadata(researcher)
     graph = [{ 'data': { 'id': researcher, 'label': researcher } }]
-    results = {"author_metadata": data, "graph": graph}
+    results = {"metadata": data, "graph": graph}
   return results
 
 def get_authors(institution, topic):
