@@ -83,7 +83,7 @@ def get_authors(institution, topic):
       for author_name in authors:
         author_node = { 'data': { 'id': author_name, 'label': author_name } }
         topic_edge = { 'data': { 'source': author_name, 'target': topic } }
-        institution_edge = { 'data': { 'source': author, 'target': institution } }
+        institution_edge = { 'data': { 'source': author_name, 'target': institution } }
         graph.append(author_node)
         if not topic_edge in graph:
           graph.append(topic_edge)
@@ -121,7 +121,7 @@ def get_topics(author, institution):
       author_node = { 'data': { 'id': author, 'label': author } }
       graph.append(institution_node)
       graph.append(author_node)
-      graph.append( { 'data': { 'source': author_node, 'target': institution_node } })
+      graph.append( { 'data': { 'source': author, 'target': institution } })
       for topic_name in topics:
         topic_node = { 'data': { 'id': topic_name, 'label': topic_name } }
         topic_edge = { 'data': { 'source': topic_name, 'target': author } }
