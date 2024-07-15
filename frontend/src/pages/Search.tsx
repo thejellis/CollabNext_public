@@ -1,31 +1,18 @@
 import '../styles/Search.css';
 
-import React, {useEffect, useState} from 'react';
-import {Circles} from 'react-loader-spinner';
-import {useSearchParams} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import CytoscapeComponent from 'react-cytoscapejs';
+import { Circles } from 'react-loader-spinner';
+import { useSearchParams } from 'react-router-dom';
 
-import {Box, Button, Text, useToast} from '@chakra-ui/react';
+import { Box, Button, Text, useToast } from '@chakra-ui/react';
 
-import NetworkMap from '../assets/NetworkMap.png';
-import {baseUrl} from '../utils/constants';
-import {ResearchDataInterface} from '../utils/interfaces';
-
-const initialValue = {
-  cited_count: '',
-  works_count: '',
-  works: [],
-  institution_name: '',
-  researcher_name: '',
-  ror: '',
-  author_count: '',
-  url: '',
-  worksAreTopics: false,
-  worksAreAuthors: false,
-  link: '',
-};
+// import NetworkMap from '../assets/NetworkMap.png';
+import { baseUrl, initialValue, layout, styleSheet } from '../utils/constants';
+import { ResearchDataInterface } from '../utils/interfaces';
 
 const Search = () => {
-  console.log(baseUrl);
+  // console.log(baseUrl);
   let [searchParams] = useSearchParams();
   const institution = searchParams.get('institution');
   const type = searchParams.get('type');
@@ -80,19 +67,21 @@ const Search = () => {
           .then((data) => {
             console.log(data);
             setData({
-              cited_count: data?.cited_count || data?.cited_by_count,
-              works_count: data?.works_count,
+              cited_count:
+                data?.metadata?.cited_count || data?.metadata?.cited_by_count,
+              works_count: data?.metadata?.works_count,
               works: [],
               institution_name: researcherType
-                ? data?.institution_name
-                : data?.name,
-              researcher_name: researcherType ? data?.name : '',
-              ror: data?.ror,
-              author_count: data?.author_count,
-              url: data?.homepage || data?.orcid,
+                ? data?.metadata?.institution_name
+                : data?.metadata?.name,
+              researcher_name: researcherType ? data?.metadata?.name : '',
+              ror: data?.metadata?.ror,
+              author_count: data?.metadata?.author_count,
+              url: data?.metadata?.homepage || data?.metadata?.orcid,
               worksAreAuthors: false,
               worksAreTopics: false,
-              link: data?.oa_link,
+              link: data?.metadata?.oa_link,
+              graph: data?.graph,
             });
             setIsLoading(false);
           })
@@ -149,6 +138,7 @@ const Search = () => {
             link:
               data?.author_metadata?.oa_link ||
               data?.institution_metadata?.oa_link,
+            graph: data?.graph,
           });
           setIsLoading(false);
         })
@@ -249,7 +239,21 @@ const Search = () => {
         ) : isNetworkMap ? (
           <div className='network-map'>
             <button className='topButton'>Network Map</button>
-            <img src={NetworkMap} alt='Network Map' />
+            {/* <img src={NetworkMap} alt='Network Map' /> */}
+
+            <CytoscapeComponent
+              elements={data?.graph}
+              // pan={{ x: 200, y: 200 }}
+              id='cyto'
+              style={{width: '100%'}}
+              zoomingEnabled={true}
+              maxZoom={1.5}
+              minZoom={0.6}
+              autounselectify={false}
+              boxSelectionEnabled={true}
+              stylesheet={styleSheet}
+              layout={layout}
+            />
           </div>
         ) : (
           <div>
@@ -265,7 +269,8 @@ const Search = () => {
                     className='ror'
                     href={data?.ror}
                   >
-                    RORID
+                    RORID -{' '}
+                    {data?.ror?.split('/')[data?.ror?.split('/')?.length - 1]}
                   </a>
                 )}
                 {data?.url && (
@@ -275,7 +280,7 @@ const Search = () => {
                     className='ror'
                     href={data?.url}
                   >
-                    URL
+                    {data?.url}
                   </a>
                 )}
                 {data?.author_count && (

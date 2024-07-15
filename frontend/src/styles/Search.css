@@ -18,6 +18,10 @@
   max-width: 800px;
 }
 
+/* .network-map {
+  border: 1px solid red;
+} */
+
 .main-content {
   display: flex;
   margin-top: 1.5rem;
@@ -96,6 +100,10 @@ h2 {
   margin-left: 6rem;
 }
 
+#cyto {
+  height: 400px;
+}
+
 /* Media query for screens smaller than 600px */
 @media (max-width: 450px) {
   .main-content {
@@ -132,5 +140,9 @@ h2 {
   .main-content button,
   .main-content select {
     font-size: 13px;
+  }
+
+  #cyto {
+    height: 150px;
   }
 }
