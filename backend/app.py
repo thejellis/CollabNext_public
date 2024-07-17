@@ -41,15 +41,15 @@ def initial_search():
     results = {"works": works, "author_metadata": researcher_data, "topic_metadata": topic_data, "graph": graph}
   elif topic:
     data = get_topic_metadata(topic)
-    graph = [{ 'data': { 'id': topic, 'label': topic } }]
+    graph = {"nodes": [{ 'data': { 'id': topic, 'label': topic, 'type': 'topic' } }], "edges": []}
     results = {"metadata": data, "graph": graph}
   elif institution:
     data = get_institution_metadata(institution)
-    graph = [{ 'data': { 'id': institution, 'label': institution } }]
+    graph = {"nodes": [{ 'data': { 'id': institution, 'label': institution, 'type': 'institution' } }], "edges": []}
     results = {"metadata": data, "graph": graph}
   elif researcher:
     data = get_author_metadata(researcher)
-    graph = [{ 'data': { 'id': researcher, 'label': researcher } }]
+    graph = {"nodes": [{ 'data': { 'id': researcher, 'label': researcher, 'type': 'researcher' } }], "edges": []}
     results = {"metadata": data, "graph": graph}
   return results
 
@@ -76,22 +76,23 @@ def get_authors(institution, topic):
       for author in results:
          authors.append(author['name'])
 
-      graph = []
-      institution_node = { 'data': { 'id': institution, 'label': institution } }
-      topic_node = { 'data': { 'id': topic, 'label': topic } }
-      graph.append(institution_node)
-      graph.append(topic_node)
+      nodes = []
+      edges = []
+      institution_node = { 'data': { 'id': institution, 'label': institution, "type": "institution" } }
+      topic_node = { 'data': { 'id': topic, 'label': topic, "type": "topic" } }
+      nodes.append(institution_node)
+      nodes.append(topic_node)
       for author_name in authors:
-        author_node = { 'data': { 'id': author_name, 'label': author_name } }
-        topic_edge = { 'data': { 'source': author_name, 'target': topic } }
-        institution_edge = { 'data': { 'source': author_name, 'target': institution } }
-        graph.append(author_node)
-        if not topic_edge in graph:
-          graph.append(topic_edge)
-        if not institution_edge in graph:
-          graph.append(institution_edge)
+        author_node = { 'data': { 'id': author_name, 'label': author_name, "type": "researcher" } }
+        topic_edge = { 'data': { 'source': author_name, 'target': topic, "label": "researches" } }
+        institution_edge = { 'data': { 'source': author_name, 'target': institution, "label": "memberOf" } }
+        nodes.append(author_node)
+        if not topic_edge in edges:
+          edges.append(topic_edge)
+        if not institution_edge in edges:
+          edges.append(institution_edge)
 
-      return {"names": authors}, graph
+      return {"names": authors}, {"nodes": nodes, "edges": edges}
 
 def get_topics(author, institution):
    if author and institution:
@@ -117,20 +118,21 @@ def get_topics(author, institution):
       for topic in results:
          topics.append(topic['name'])
       
-      graph = []
-      institution_node = { 'data': { 'id': institution, 'label': institution } }
-      author_node = { 'data': { 'id': author, 'label': author } }
-      graph.append(institution_node)
-      graph.append(author_node)
-      graph.append( { 'data': { 'source': author, 'target': institution } })
+      edges = []
+      nodes = []
+      institution_node = { 'data': { 'id': institution, 'label': institution, "type": "institution" } }
+      author_node = { 'data': { 'id': author, 'label': author, "type": "researcher" } }
+      nodes.append(institution_node)
+      nodes.append(author_node)
+      edges.append( { 'data': { 'source': author, 'target': institution, "label": "memberOf" } })
       for topic_name in topics:
-        topic_node = { 'data': { 'id': topic_name, 'label': topic_name } }
-        topic_edge = { 'data': { 'source': topic_name, 'target': author } }
-        graph.append(topic_node)
-        if not topic_edge in graph:
-          graph.append(topic_edge)
+        topic_node = { 'data': { 'id': topic_name, 'label': topic_name, "type": "topic" } }
+        topic_edge = { 'data': { 'source': topic_name, 'target': author, "label": "researches" } }
+        nodes.append(topic_node)
+        if not topic_edge in edges:
+          edges.append(topic_edge)
       
-      return {"names": topics}, graph
+      return {"names": topics}, {"nodes": nodes, "edges": edges}
 
 def get_works(author, topic, institution):
    if author and topic and institution:
@@ -157,24 +159,25 @@ def get_works(author, topic, institution):
       for title in results:
          titles.append(title['name'])
       
-      graph = []
-      author_node = { 'data': { 'id': author, 'label': author } }
-      topic_node = { 'data': { 'id': topic, 'label': topic } }
-      institution_node = { 'data': { 'id': institution, 'label': institution } }
-      graph.append(author_node)
-      graph.append(topic_node)
-      graph.append(institution_node)
-      graph.append({ 'data': { 'source': author, 'target': institution } })
+      nodes = []
+      edges = []
+      author_node = { 'data': { 'id': author, 'label': author, 'type': 'researcher' } }
+      topic_node = { 'data': { 'id': topic, 'label': topic, 'type': 'topic' } }
+      institution_node = { 'data': { 'id': institution, 'label': institution, 'type': 'institution' } }
+      nodes.append(author_node)
+      nodes.append(topic_node)
+      nodes.append(institution_node)
+      edges.append({ 'data': { 'source': author, 'target': institution, 'label': 'memberOf' } })
       for work in titles:
-        work_node = { 'data': { 'id': work, 'label': work } }
-        work_edge = { 'data': { 'source': work, 'target': author } }
-        topic_edge = { 'data': { 'source': work, 'target': topic } }
-        graph.append(work_node)
-        graph.append(work_edge)
-        if not topic_edge in graph:
-          graph.append(topic_edge)
+        work_node = { 'data': { 'id': work, 'label': work, 'type': 'work' } }
+        work_edge = { 'data': { 'source': work, 'target': author, 'label': 'authored' } }
+        topic_edge = { 'data': { 'source': work, 'target': topic, 'label': 'hasTopic' } }
+        nodes.append(work_node)
+        edges.append(work_edge)
+        if not topic_edge in edges:
+          edges.append(topic_edge)
 
-      return {"titles": titles}, graph
+      return {"titles": titles}, {"nodes": nodes, "edges": edges}
    elif author and topic:
       query = f"""
       PREFIX soa: <https://semopenalex.org/ontology/>
@@ -196,21 +199,22 @@ def get_works(author, topic, institution):
       for title in results:
          titles.append(title['name'])
 
-      graph = []
-      author_node = { 'data': { 'id': author, 'label': author } }
-      topic_node = { 'data': { 'id': topic, 'label': topic } }
-      graph.append(author_node)
-      graph.append(topic_node)
+      nodes = []
+      edges = []
+      author_node = { 'data': { 'id': author, 'label': author, 'type': 'researcher' } }
+      topic_node = { 'data': { 'id': topic, 'label': topic, 'type': 'topic' } }
+      nodes.append(author_node)
+      nodes.append(topic_node)
       for work in titles:
-        work_node = { 'data': { 'id': work, 'label': work } }
-        work_edge = { 'data': { 'source': work, 'target': author } }
-        topic_edge = { 'data': { 'source': work, 'target': topic } }
-        graph.append(work_node)
-        graph.append(work_edge)
-        if not topic_edge in graph:
-          graph.append(topic_edge)
+        work_node = { 'data': { 'id': work, 'label': work, 'type': 'work' } }
+        work_edge = { 'data': { 'source': work, 'target': author, 'label': 'authored' } }
+        topic_edge = { 'data': { 'source': work, 'target': topic, 'label': 'hasTopic' } }
+        nodes.append(work_node)
+        edges.append(work_edge)
+        if not topic_edge in edges:
+          edges.append(topic_edge)
 
-      return {"titles": titles}, graph
+      return {"titles": titles}, {"nodes": nodes, "edges": edges}
 
 
 def get_institution_metadata(institution):
