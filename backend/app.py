@@ -1,6 +1,7 @@
 from flask import Flask, send_from_directory, request, jsonify
 import requests
 from flask_cors import CORS
+import json
 
 app= Flask(__name__, static_folder='build', static_url_path='/')
 CORS(app)
@@ -287,5 +288,13 @@ def query_endpoint(query):
     return_value.append(my_dict)
   return return_value
 
+@app.route('/get-default-graph', methods=['POST'])
+def get_default_graph():
+  with open("default.json", "r") as file:
+    graph = json.load(file)
+  return {"graph": graph}
+  
+
 if __name__ =='__main__':
-  app.run()
+  #app.run()
+  print(get_default_graph())
