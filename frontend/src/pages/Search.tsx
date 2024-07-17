@@ -148,14 +148,35 @@ const Search = () => {
           console.log(error);
         });
     } else {
-      toast({
-        title: 'Error',
-        description: 'All 3 fields cannot be empty',
-        status: 'error',
-        duration: 8000,
-        isClosable: true,
-        position: 'top-right',
-      });
+      fetch(`${baseUrl}/get-default-graph`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: null,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setData({
+            ...initialValue,
+            graph: data?.graph,
+          });
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          setData(initialValue);
+          console.log(error);
+        });
+      // toast({
+      //   title: 'Error',
+      //   description: 'All 3 fields cannot be empty',
+      //   status: 'error',
+      //   duration: 8000,
+      //   isClosable: true,
+      //   position: 'top-right',
+      // });
     }
   };
 
@@ -232,7 +253,7 @@ const Search = () => {
               visible={true}
             />
           </Box>
-        ) : !data?.cited_count ? (
+        ) : !data?.graph ? (
           <Box fontSize={{lg: '20px'}} ml={{lg: '4rem'}} fontWeight={'bold'}>
             No result
           </Box>
