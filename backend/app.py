@@ -296,5 +296,4 @@ def get_default_graph():
   
 
 if __name__ =='__main__':
-  #app.run()
-  print(get_default_graph())
+  app.run()
