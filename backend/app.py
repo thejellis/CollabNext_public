@@ -40,16 +40,13 @@ def initial_search():
     topic_data = get_topic_metadata(topic)
     results = {"works": works, "author_metadata": researcher_data, "topic_metadata": topic_data, "graph": graph}
   elif topic:
-    data = get_topic_metadata(topic)
-    graph = {"nodes": [{ 'data': { 'id': topic, 'label': topic, 'type': 'topic' } }], "edges": []}
+    data, graph = get_topic_metadata(topic)
     results = {"metadata": data, "graph": graph}
   elif institution:
-    data = get_institution_metadata(institution)
-    graph = {"nodes": [{ 'data': { 'id': institution, 'label': institution, 'type': 'institution' } }], "edges": []}
+    data, graph = get_institution_metadata(institution)
     results = {"metadata": data, "graph": graph}
   elif researcher:
-    data = get_author_metadata(researcher)
-    graph = {"nodes": [{ 'data': { 'id': researcher, 'label': researcher, 'type': 'researcher' } }], "edges": []}
+    data, graph = get_author_metadata(researcher)
     results = {"metadata": data, "graph": graph}
   return results
 
@@ -229,6 +226,16 @@ def get_institution_metadata(institution):
   ?people <http://www.w3.org/ns/org#memberOf> ?institution .
   {'}'} GROUP BY ?ror ?workscount ?citedcount ?homepage ?institution
   """
+  query2 = f"""
+  SELECT DISTINCT ?topicName
+  WHERE {'{'}
+  ?institution <http://xmlns.com/foaf/0.1/name> "{institution}" .
+  ?person <http://www.w3.org/ns/org#memberOf> ?institution .
+  ?work <http://purl.org/dc/terms/creator> ?person .
+  << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
+  ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> ?topicName .
+  {'}'}LIMIT 10
+  """
   results = query_endpoint(query)
   ror = results[0]['ror']
   works_count = results[0]['workscount']
@@ -237,7 +244,18 @@ def get_institution_metadata(institution):
   author_count = results[0]['peoplecount']
   oa_link = results[0]['institution']
   oa_link = oa_link.replace('semopenalex', 'openalex').replace('institution', 'institutions')
-  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link}
+
+  nodes = []
+  edges = []
+  nodes.append({ 'data': { 'id': institution, 'label': institution, 'type': 'institution' } })
+  results2 = query_endpoint(query2)
+  for topic in results2:
+    name = topic['topicName']
+    node = { 'data': { 'id': name, 'label': name, 'type': 'topic' } }
+    node_edge = { 'data': { 'source': institution, 'target': name, 'label': 'researches' } }
+    nodes.append(node)
+    edges.append(node_edge)
+  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link}, {"nodes": nodes, "edges": edges}
 
 def get_topic_metadata(topic):
    query = f"""
@@ -251,13 +269,35 @@ def get_topic_metadata(topic):
         ?topic <http://www.w3.org/2004/02/skos/core#note> ?note .
     {'}'}
    """
+   query2 = f"""
+    SELECT DISTINCT ?institutionName
+    WHERE {'{'}
+    ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> "{topic}" .
+    << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
+    ?work <http://purl.org/dc/terms/creator> ?person .
+    ?person <http://www.w3.org/ns/org#memberOf> ?institution .
+    ?institution <http://xmlns.com/foaf/0.1/name> ?institutionName .
+    {'}'}LIMIT 10
+   """
    results = query_endpoint(query)
    works_count = results[0]['works_count']
    cited_by_count = results[0]['cited_by_count']
    description = results[0]['note']
    oa_link = results[0]['topic']
    oa_link = oa_link.replace('semopenalex', 'openalex').replace('topic', 'topics')
-   return {"works_count": works_count, "cited_by_count": cited_by_count, "description": description, "oa_link": oa_link}
+
+   nodes = []
+   edges = []
+   nodes.append({ 'data': { 'id': topic, 'label': topic, 'type': 'topic' } })
+   results2 = query_endpoint(query2)
+   for inst in results2:
+     name = inst['institutionName']
+     node = { 'data': { 'id': name, 'label': name, 'type': 'institution' } }
+     node_edge = { 'data': { 'source': name, 'target': topic, 'label': 'researches' } }
+     nodes.append(node)
+     edges.append(node_edge)
+
+   return {"works_count": works_count, "cited_by_count": cited_by_count, "description": description, "oa_link": oa_link}, {"nodes": nodes, "edges": edges}
 
 def get_author_metadata(author):
    query = f"""
@@ -271,6 +311,15 @@ def get_author_metadata(author):
     ?current_institution <http://xmlns.com/foaf/0.1/name> ?current_institution_name .
     {'}'}
    """
+   query2 = f"""
+    SELECT DISTINCT ?topicName
+    WHERE {'{'}
+    ?person <http://xmlns.com/foaf/0.1/name> "{author}" .
+    ?work <http://purl.org/dc/terms/creator> ?person .
+    << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
+    ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> ?topicName .
+    {'}'}LIMIT 10
+   """
    results = query_endpoint(query)
    cited_by_count = results[0]['cite_count']
    orcid = results[0]['orcid']
@@ -278,7 +327,21 @@ def get_author_metadata(author):
    current_institution = results[0]['current_institution_name']
    oa_link = results[0]['author']
    oa_link = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
-   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution, "oa_link": oa_link}
+
+   nodes = []
+   edges = []
+   nodes.append({ 'data': { 'id': author, 'label': author, 'type': 'researcher' } })
+   nodes.append({ 'data': { 'id': current_institution, 'label': current_institution, 'type': 'institution' } })
+   edges.append({ 'data': { 'source': author, 'target': current_institution, 'label': 'memberOf' } })
+   results2 = query_endpoint(query2)
+   for top in results2:
+     name = top['topicName']
+     node = { 'data': { 'id': name, 'label': name, 'type': 'topic' } }
+     node_edge = { 'data': { 'source': author, 'target': name, 'label': 'researches' } }
+     nodes.append(node)
+     edges.append(node_edge)
+
+   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution, "oa_link": oa_link}, {'nodes': nodes, 'edges': edges}
 
 def query_endpoint(query):
   endpoint_url = "https://semopenalex.org/sparql"
