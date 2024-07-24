@@ -5,7 +5,7 @@ export const styleSheet = [
   {
     selector: 'node',
     style: {
-      backgroundColor: '#4a56a6',
+      // backgroundColor: '#4a56a6',
       width: 30,
       height: 30,
       label: 'data(label)',
@@ -41,6 +41,24 @@ export const styleSheet = [
     selector: "node[type='device']",
     style: {
       shape: 'rectangle',
+    },
+  },
+  {
+    selector: "node[type='institution']",
+    style: {
+      backgroundColor: '#4a56a6',
+    },
+  },
+  {
+    selector: "node[type='topic']",
+    style: {
+      backgroundColor: 'blue',
+    },
+  },
+  {
+    selector: "node[type='researcher']",
+    style: {
+      backgroundColor: 'green',
     },
   },
   {
@@ -81,5 +99,5 @@ export const initialValue = {
   worksAreTopics: false,
   worksAreAuthors: false,
   link: '',
-  graph: [],
+  graph: {nodes: [], edges: []},
 };
