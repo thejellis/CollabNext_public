@@ -373,12 +373,12 @@ def get_default_graph():
   
 
 if __name__ =='__main__':
-  #app.run()
-  x,result = get_topics("Didier Contis", "Georgia Institute of Technology")
+  app.run()
+  """x,result = get_topics("Didier Contis", "Georgia Institute of Technology")
   print(x)
   for a in result['nodes']:
     print(a)
   print()
   print()
   for a in result['edges']:
-    print(a)
+    print(a)"""
