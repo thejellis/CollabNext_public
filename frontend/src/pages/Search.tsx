@@ -14,6 +14,7 @@ import { ResearchDataInterface } from '../utils/interfaces';
 const Search = () => {
   // console.log(baseUrl);
   let [searchParams] = useSearchParams();
+  const cyRef = React.useRef<cytoscape.Core | undefined>();
   const institution = searchParams.get('institution');
   const type = searchParams.get('type');
   const topic = searchParams.get('topic');
@@ -69,10 +70,11 @@ const Search = () => {
             setData({
               cited_count:
                 data?.metadata?.cited_count || data?.metadata?.cited_by_count,
-              works_count: data?.metadata?.works_count,
+              works_count:
+                data?.metadata?.works_count || data?.metadata?.work_count,
               works: [],
               institution_name: researcherType
-                ? data?.metadata?.institution_name
+                ? data?.metadata?.current_institution
                 : data?.metadata?.name,
               researcher_name: researcherType ? data?.metadata?.name : '',
               ror: data?.metadata?.ror,
@@ -148,14 +150,37 @@ const Search = () => {
           console.log(error);
         });
     } else {
-      toast({
-        title: 'Error',
-        description: 'All 3 fields cannot be empty',
-        status: 'error',
-        duration: 8000,
-        isClosable: true,
-        position: 'top-right',
-      });
+      setIsLoading(true);
+      fetch(`${baseUrl}/get-default-graph`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: null,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setData({
+            ...initialValue,
+            graph: data?.graph,
+          });
+          setIsNetworkMap(true);
+          setIsLoading(false);
+        })
+        .catch((error) => {
+          setIsLoading(false);
+          setData(initialValue);
+          console.log(error);
+        });
+      // toast({
+      //   title: 'Error',
+      //   description: 'All 3 fields cannot be empty',
+      //   status: 'error',
+      //   duration: 8000,
+      //   isClosable: true,
+      //   position: 'top-right',
+      // });
     }
   };
 
@@ -232,7 +257,7 @@ const Search = () => {
               visible={true}
             />
           </Box>
-        ) : !data?.cited_count ? (
+        ) : !data?.graph ? (
           <Box fontSize={{lg: '20px'}} ml={{lg: '4rem'}} fontWeight={'bold'}>
             No result
           </Box>
@@ -240,9 +265,8 @@ const Search = () => {
           <div className='network-map'>
             <button className='topButton'>Network Map</button>
             {/* <img src={NetworkMap} alt='Network Map' /> */}
-
             <CytoscapeComponent
-              elements={data?.graph}
+              elements={CytoscapeComponent.normalizeElements(data?.graph)}
               // pan={{ x: 200, y: 200 }}
               id='cyto'
               style={{width: '100%'}}
@@ -253,6 +277,7 @@ const Search = () => {
               boxSelectionEnabled={true}
               stylesheet={styleSheet}
               layout={layout}
+              cy={(cy) => (cyRef.current = cy)}
             />
           </div>
         ) : (

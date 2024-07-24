@@ -97,8 +97,8 @@ const About = () => {
             research collaborations with HBCUs and illuminate the broader
             research landscape. We utilize open science data sources, follow
             human - centered design principles, and leverage state - of - the -
-            art algor it hms to build a platform that will help identify
-            existing and potentially new research partnerships.
+            art algorithms to build a platform that will help identify existing
+            and potentially new research partnerships.
           </Text>
         </Box>
         <Box mt='1.7rem'>
@@ -152,7 +152,7 @@ const About = () => {
             color='#FFFFFF'
             fontSize={{base: '12px', lg: '16px'}}
           >
-            We are current ly using data from{' '}
+            We are currently using data from{' '}
             <a
               href='https://explore.openalex.org/'
               target='_blank'

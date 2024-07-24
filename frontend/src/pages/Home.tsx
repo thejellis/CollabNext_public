@@ -59,17 +59,17 @@ const Home = () => {
             console.log(`type: ${type}`);
             console.log(`topic: ${topic}`);
             console.log(`researcher: ${researcher}`);
-            if (!institution && !topic && !researcher) {
-              toast({
-                title: 'Error',
-                description: 'All 3 fields cannot be empty',
-                status: 'error',
-                duration: 8000,
-                isClosable: true,
-                position: 'top-right',
-              });
-              return;
-            }
+            // if (!institution && !topic && !researcher) {
+            //   toast({
+            //     title: 'Error',
+            //     description: 'All 3 fields cannot be empty',
+            //     status: 'error',
+            //     duration: 8000,
+            //     isClosable: true,
+            //     position: 'top-right',
+            //   });
+            //   return;
+            // }
             navigate(
               `search?institution=${institution}&type=${type}&topic=${topic}&researcher=${researcher}`,
             );
