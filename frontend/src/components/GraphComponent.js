@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Orb } from '@memgraph/orb';
 
 const GraphComponent = ({ graphData }) => {
   const graphContainerRef = useRef(null);
   const loaderOverlayRef = useRef(null);
   const detailsRef = useRef(null);
+  const [selectedNode, setSelectedNode] = useState(null);
 
   useEffect(() => {
     if (!graphData) {
@@ -88,6 +89,16 @@ const GraphComponent = ({ graphData }) => {
 
     orb.data.setup({ nodes, edges });
 
+    orb.events.on('node-click', (event) => {
+      handleNodeClick(event);
+    });
+
+    function handleNodeClick(event) {
+      const nodeData = event.node.data;
+      console.log('Selected Node:', nodeData); // Log the selected node to the console
+      setSelectedNode(nodeData);
+    }
+
     orb.view.render(() => {
       if (loaderOverlayRef.current) {
         loaderOverlayRef.current.style.display = 'none';
@@ -99,6 +110,22 @@ const GraphComponent = ({ graphData }) => {
     });
   }, [graphData]);
 
+  const renderDetails = () => {
+    if (!selectedNode) return null;
+
+    let html = '';
+
+    if (selectedNode.type === 'INSTITUTION') {
+      html += `<a href="${selectedNode.id}" target="_blank">View on OpenAlex</a>`;
+    } else if (selectedNode.type === 'AUTHOR') {
+      html += `<p><b>ID:</b> ${selectedNode.id}</p>`;
+    } else if (selectedNode.type === 'TOPIC') {
+      html += `<a href="${selectedNode.id}" target="_blank">View on OpenAlex</a>`;
+    }
+
+    return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  };
+
   return (
     <div>
       <div ref={loaderOverlayRef} id="loader-overlay" style={{ display: 'none' }}>
@@ -106,7 +133,7 @@ const GraphComponent = ({ graphData }) => {
       </div>
       <div ref={graphContainerRef} id="graph" style={{ height: '500px', width: '100%' }} />
       <div ref={detailsRef} className="details" style={{ display: 'none' }}>
-        {/* Any additional details to display */}
+        {renderDetails()}
       </div>
     </div>
   );
