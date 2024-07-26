@@ -51,6 +51,7 @@ def initial_search():
   return results
 
 def get_authors(institution, topic):
+   # DONE
    if institution and topic:
       query = f"""
       PREFIX soa: <https://semopenalex.org/ontology/>
@@ -58,7 +59,7 @@ def get_authors(institution, topic):
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-      SELECT DISTINCT ?name
+      SELECT DISTINCT ?name ?institution ?topic ?author
       WHERE {'{'}
         ?institution foaf:name "{institution}" .
         ?topic skos:prefLabel "{topic}" .
@@ -70,19 +71,24 @@ def get_authors(institution, topic):
       """
       results = query_endpoint(query)
       authors = []
-      for author in results:
-         authors.append(author['name'])
-
+      for entry in results:
+         oa_link = entry['author']
+         author_id = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
+         authors.append((entry['name'], author_id))
+         institution_id = entry['institution'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
+         topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
       nodes = []
       edges = []
-      institution_node = { 'data': { 'id': institution, 'label': institution, "type": "institution" } }
-      topic_node = { 'data': { 'id': topic, 'label': topic, "type": "topic" } }
+      institution_node = { 'id': institution_id, 'label': institution, "type": "INSTITUTION" } 
+      topic_node = { 'id': topic_id, 'label': topic, "type": "TOPIC" }
       nodes.append(institution_node)
       nodes.append(topic_node)
-      for author_name in authors:
-        author_node = { 'data': { 'id': author_name, 'label': author_name, "type": "researcher" } }
-        topic_edge = { 'data': { 'source': author_name, 'target': topic, "label": "researches" } }
-        institution_edge = { 'data': { 'source': author_name, 'target': institution, "label": "memberOf" } }
+      for entry in authors:
+        author_name = entry[0]
+        author_id = entry[1]
+        author_node = { 'id': author_id, 'label': author_name, "type": "AUTHOR" }
+        topic_edge = { 'id': f"""{author_id}-{topic_id}""", 'start': author_id, 'end': topic_id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC"}
+        institution_edge = { 'id': f"""{author_id}-{institution_id}""" ,'start': author_id, 'end': institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"}
         nodes.append(author_node)
         if not topic_edge in edges:
           edges.append(topic_edge)
@@ -92,6 +98,7 @@ def get_authors(institution, topic):
       return {"names": authors}, {"nodes": nodes, "edges": edges}
 
 def get_topics(author, institution):
+   # DONE
    if author and institution:
       query = f"""
       PREFIX soa: <https://semopenalex.org/ontology/>
@@ -99,7 +106,7 @@ def get_topics(author, institution):
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-      SELECT DISTINCT ?name (GROUP_CONCAT(DISTINCT ?workTitle; SEPARATOR=", ") AS ?workTitles)
+      SELECT DISTINCT ?name ?author ?institution ?topic (GROUP_CONCAT(DISTINCT ?workTitle; SEPARATOR=", ") AS ?workTitles)
       WHERE {'{'}
         ?author foaf:name "{author}" .
         ?institution foaf:name "{institution}" .
@@ -109,25 +116,30 @@ def get_topics(author, institution):
         << ?work soa:hasTopic ?topic >> ?p ?o .
         ?work <http://purl.org/dc/terms/title> ?workTitle .
         ?topic skos:prefLabel ?name .
-      {'}'}GROUP BY ?name
+      {'}'}GROUP BY ?name ?author ?institution ?topic
       """
       results = query_endpoint(query)
       topics = []
-      for topic in results:
-         topics.append((topic['name'], topic['workTitles']))
-      
+      for entry in results:
+         topic_name = entry['name']
+         work_titles = entry['workTitles']
+         topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
+         topics.append((topic_name, topic_id, work_titles))
+         institution_id = entry['institution'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
+         author_id = entry['author'].replace('semopenalex', 'openalex').replace('author', 'authors')
       edges = []
       nodes = []
-      institution_node = { 'data': { 'id': institution, 'label': institution, "type": "institution" } }
-      author_node = { 'data': { 'id': author, 'label': author, "type": "researcher" } }
+      institution_node = { 'id': institution_id, 'label': institution, "type": "INSTITUTION" } 
+      author_node = { 'id': author_id, 'label': author, "type": "AUTHOR" }
       nodes.append(institution_node)
       nodes.append(author_node)
-      edges.append( { 'data': { 'source': author, 'target': institution, "label": "memberOf" } })
+      edges.append({'id': f"""{author_id}-{institution_id}""", 'start': author_id, 'end': institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
       for entry in topics:
         topic_name = entry[0]
-        works = entry[1]
-        topic_node = { 'data': { 'id': topic_name, 'label': topic_name, "type": "topic" } }
-        topic_edge = { 'data': { 'source': author, 'target': topic_name, "label": "researches", "connectingWorks": works } }
+        topic_id = entry[1]
+        works = entry[2]
+        topic_node = { 'id': topic_id, 'label': topic_name, "type": "TOPIC" }
+        topic_edge = { 'id': f"""{author_id}-{topic_id}""", 'start': author_id, 'end': topic_id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC", "connecting_works": works}
         nodes.append(topic_node)
         if not topic_edge in edges:
           edges.append(topic_edge)
@@ -139,13 +151,14 @@ def get_topics(author, institution):
 
 def get_works(author, topic, institution):
    if author and topic and institution:
+      # DONE
       query = f"""
       PREFIX soa: <https://semopenalex.org/ontology/>
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-      SELECT DISTINCT ?name
+      SELECT DISTINCT ?name ?author ?topic ?institution
       WHERE {'{'}
         ?author foaf:name "{author}" .
         ?institution foaf:name "{institution}" .
@@ -159,22 +172,25 @@ def get_works(author, topic, institution):
       """
       results = query_endpoint(query)
       titles = []
-      for title in results:
-         titles.append(title['name'])
+      for entry in results:
+         author_id = entry['author'].replace('semopenalex', 'openalex').replace('author', 'authors')
+         topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
+         institution_id = entry['institution'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
+         titles.append(entry['name'])
       
       nodes = []
       edges = []
-      author_node = { 'data': { 'id': author, 'label': author, 'type': 'researcher' } }
-      topic_node = { 'data': { 'id': topic, 'label': topic, 'type': 'topic' } }
-      institution_node = { 'data': { 'id': institution, 'label': institution, 'type': 'institution' } }
+      author_node = { 'id': author_id, 'label': author, 'type': 'AUTHOR' } 
+      topic_node = { 'id': topic_id, 'label': topic, 'type': 'TOPIC' }
+      institution_node = { 'id': institution_id, 'label': institution, 'type': 'INSTITUTION' }
       nodes.append(author_node)
       nodes.append(topic_node)
       nodes.append(institution_node)
-      edges.append({ 'data': { 'source': author, 'target': institution, 'label': 'memberOf' } })
+      edges.append({'id': f"""{author_id}-{institution_id}""", 'start': author_id, 'end': institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
       for work in titles:
-        work_node = { 'data': { 'id': work, 'label': work, 'type': 'work' } }
-        work_edge = { 'data': { 'source': work, 'target': author, 'label': 'authored' } }
-        topic_edge = { 'data': { 'source': work, 'target': topic, 'label': 'hasTopic' } }
+        work_node = { 'id': work, 'label': work, 'type': 'WORK' } 
+        work_edge = { 'id': f"""{work}-{author_id}""", 'start': work, 'end': author_id, 'label': 'authored' }
+        topic_edge = { 'id': f"""{work}-{topic_id}""", 'start': work, 'end': topic_id, 'label': 'hasTopic' } 
         nodes.append(work_node)
         edges.append(work_edge)
         if not topic_edge in edges:
@@ -182,13 +198,14 @@ def get_works(author, topic, institution):
 
       return {"titles": titles}, {"nodes": nodes, "edges": edges}
    elif author and topic:
+      #Done
       query = f"""
       PREFIX soa: <https://semopenalex.org/ontology/>
       PREFIX dct: <http://purl.org/dc/terms/>
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-      SELECT DISTINCT ?name
+      SELECT DISTINCT ?name ?author ?topic
       WHERE {'{'}
         ?author foaf:name "{author}" .
         ?topic skos:prefLabel "{topic}" .
@@ -199,19 +216,21 @@ def get_works(author, topic, institution):
       """
       results = query_endpoint(query)
       titles = []
-      for title in results:
-         titles.append(title['name'])
+      for entry in results:
+         author_id = entry['author'].replace('semopenalex', 'openalex').replace('author', 'authors')
+         topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
+         titles.append(entry['name'])
 
       nodes = []
       edges = []
-      author_node = { 'data': { 'id': author, 'label': author, 'type': 'researcher' } }
-      topic_node = { 'data': { 'id': topic, 'label': topic, 'type': 'topic' } }
+      author_node = { 'id': author_id, 'label': author, 'type': 'AUTHOR' } 
+      topic_node = { 'id': topic_id, 'label': topic, 'type': 'TOPIC' }
       nodes.append(author_node)
       nodes.append(topic_node)
       for work in titles:
-        work_node = { 'data': { 'id': work, 'label': work, 'type': 'work' } }
-        work_edge = { 'data': { 'source': work, 'target': author, 'label': 'authored' } }
-        topic_edge = { 'data': { 'source': work, 'target': topic, 'label': 'hasTopic' } }
+        work_node = { 'id': work, 'label': work, 'type': 'WORK' } 
+        work_edge = { 'id': f"""{work}-{author_id}""", 'start': work, 'end': author_id, 'label': 'authored' }
+        topic_edge = { 'id': f"""{work}-{topic_id}""", 'start': work, 'end': topic_id, 'label': 'hasTopic' } 
         nodes.append(work_node)
         edges.append(work_edge)
         if not topic_edge in edges:
@@ -233,7 +252,7 @@ def get_institution_metadata(institution):
   {'}'} GROUP BY ?ror ?workscount ?citedcount ?homepage ?institution
   """
   query2 = f"""
-  SELECT DISTINCT ?topicName
+  SELECT DISTINCT ?topicName ?topic
   WHERE {'{'}
   ?institution <http://xmlns.com/foaf/0.1/name> "{institution}" .
   ?person <http://www.w3.org/ns/org#memberOf> ?institution .
@@ -253,12 +272,13 @@ def get_institution_metadata(institution):
 
   nodes = []
   edges = []
-  nodes.append({ 'data': { 'id': institution, 'label': institution, 'type': 'institution' } })
+  nodes.append({ 'id': oa_link, 'label': institution, 'type': 'INSTITUTION' })
   results2 = query_endpoint(query2)
   for topic in results2:
+    topic_id = topic['topic']
     name = topic['topicName']
-    node = { 'data': { 'id': name, 'label': name, 'type': 'topic' } }
-    node_edge = { 'data': { 'source': institution, 'target': name, 'label': 'researches' } }
+    node = { 'id': topic_id, 'label': name, 'type': 'TOPIC' }
+    node_edge = { 'id': f"""{oa_link}-{topic_id}""", 'start': oa_link, 'end': topic_id, "label": "researches", "start_type": "INSTITUTION", "end_type": "TOPIC"}
     nodes.append(node)
     edges.append(node_edge)
   return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link}, {"nodes": nodes, "edges": edges}
@@ -276,7 +296,7 @@ def get_topic_metadata(topic):
     {'}'}
    """
    query2 = f"""
-    SELECT DISTINCT ?institutionName
+    SELECT DISTINCT ?institutionName ?institution
     WHERE {'{'}
     ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> "{topic}" .
     << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
@@ -294,12 +314,13 @@ def get_topic_metadata(topic):
 
    nodes = []
    edges = []
-   nodes.append({ 'data': { 'id': topic, 'label': topic, 'type': 'topic' } })
+   nodes.append({ 'id': oa_link, 'label': topic, 'type': 'TOPIC' })
    results2 = query_endpoint(query2)
    for inst in results2:
      name = inst['institutionName']
-     node = { 'data': { 'id': name, 'label': name, 'type': 'institution' } }
-     node_edge = { 'data': { 'source': name, 'target': topic, 'label': 'researches' } }
+     institution_id = inst['institution']
+     node = {'id': institution_id, 'label': name, 'type': 'INSTITUTION' }
+     node_edge = { 'id': f"""{institution_id}-{oa_link}""", 'start': institution_id, 'end': oa_link, "label": "researches", "start_type": "INSTITUTION", "end_type": "TOPIC"}
      nodes.append(node)
      edges.append(node_edge)
 
@@ -307,7 +328,7 @@ def get_topic_metadata(topic):
 
 def get_author_metadata(author):
    query = f"""
-    SELECT ?cite_count ?orcid ?works_count ?current_institution_name ?author
+    SELECT ?cite_count ?orcid ?works_count ?current_institution_name ?author ?current_institution
     WHERE {'{'}
     ?author <http://xmlns.com/foaf/0.1/name> "{author}" .
     ?author <https://semopenalex.org/ontology/citedByCount> ?cite_count .
@@ -318,7 +339,7 @@ def get_author_metadata(author):
     {'}'}
    """
    query2 = f"""
-    SELECT ?topicName (GROUP_CONCAT(DISTINCT ?workTitle; SEPARATOR=", ") AS ?workTitles)
+    SELECT ?topicName ?topic (GROUP_CONCAT(DISTINCT ?workTitle; SEPARATOR=", ") AS ?workTitles)
     WHERE {"{"}
       ?person <http://xmlns.com/foaf/0.1/name> "Didier Contis" .
       ?work <http://purl.org/dc/terms/creator> ?person .
@@ -326,7 +347,7 @@ def get_author_metadata(author):
       ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> ?topicName .
       ?work <http://purl.org/dc/terms/title> ?workTitle .
     {"}"}
-    GROUP BY ?topicName
+    GROUP BY ?topicName ?topic
     LIMIT 10
    """
    results = query_endpoint(query)
@@ -336,18 +357,20 @@ def get_author_metadata(author):
    current_institution = results[0]['current_institution_name']
    oa_link = results[0]['author']
    oa_link = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
+   current_institution_id = results[0]['current_institution_name'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
 
    nodes = []
    edges = []
-   nodes.append({ 'data': { 'id': author, 'label': author, 'type': 'researcher' } })
-   nodes.append({ 'data': { 'id': current_institution, 'label': current_institution, 'type': 'institution' } })
-   edges.append({ 'data': { 'source': author, 'target': current_institution, 'label': 'memberOf' } })
+   nodes.append({ 'id': oa_link, 'label': author, 'type': 'AUTHOR' })
+   nodes.append({ 'id': current_institution_id, 'label': current_institution, 'type': 'INSTITUTION' })
+   edges.append({ 'id': f"""{oa_link}-{current_institution_id}""" ,'start': oa_link, 'end': current_institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
    results2 = query_endpoint(query2)
    for top in results2:
      name = top['topicName']
+     id = top['topic']
      paper_titles = top['workTitles']
-     node = { 'data': { 'id': name, 'label': name, 'type': 'topic' } }
-     node_edge = { 'data': { 'source': author, 'target': name, 'label': 'researches', 'connectingWorks': paper_titles } }
+     node = {'id': id, 'label': name, 'type': 'TOPIC' }
+     node_edge = { 'id': f"""{oa_link}-{id}""", 'start': oa_link, 'end': id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC", "connecting_works": paper_titles}
      nodes.append(node)
      edges.append(node_edge)
 
