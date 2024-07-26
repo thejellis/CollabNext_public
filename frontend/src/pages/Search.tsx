@@ -2,6 +2,7 @@ import '../styles/Search.css';
 
 import React, { useEffect, useState } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
+import GraphComponent from '../components/GraphComponent';
 import { Circles } from 'react-loader-spinner';
 import { useSearchParams } from 'react-router-dom';
 
@@ -265,19 +266,8 @@ const Search = () => {
           <div className='network-map'>
             <button className='topButton'>Network Map</button>
             {/* <img src={NetworkMap} alt='Network Map' /> */}
-            <CytoscapeComponent
-              elements={CytoscapeComponent.normalizeElements(data?.graph)}
-              // pan={{ x: 200, y: 200 }}
-              id='cyto'
-              style={{width: '100%'}}
-              zoomingEnabled={true}
-              maxZoom={1.5}
-              minZoom={0.6}
-              autounselectify={false}
-              boxSelectionEnabled={true}
-              stylesheet={styleSheet}
-              layout={layout}
-              cy={(cy) => (cyRef.current = cy)}
+            <GraphComponent
+              graphData={data?.graph}
             />
           </div>
         ) : (
