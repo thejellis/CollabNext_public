@@ -1,21 +1,21 @@
 import '../styles/Search.css';
 
-import React, { useEffect, useState } from 'react';
-import CytoscapeComponent from 'react-cytoscapejs';
+import React, {useEffect, useState} from 'react';
+import {Circles} from 'react-loader-spinner';
+import {useSearchParams} from 'react-router-dom';
+
+import {Box, Button, Text} from '@chakra-ui/react';
+
+// import CytoscapeComponent from 'react-cytoscapejs';
 import GraphComponent from '../components/GraphComponent';
-import { Circles } from 'react-loader-spinner';
-import { useSearchParams } from 'react-router-dom';
-
-import { Box, Button, Text, useToast } from '@chakra-ui/react';
-
 // import NetworkMap from '../assets/NetworkMap.png';
-import { baseUrl, initialValue, layout, styleSheet } from '../utils/constants';
-import { ResearchDataInterface } from '../utils/interfaces';
+import {baseUrl, initialValue} from '../utils/constants';
+import {ResearchDataInterface} from '../utils/interfaces';
 
 const Search = () => {
   // console.log(baseUrl);
   let [searchParams] = useSearchParams();
-  const cyRef = React.useRef<cytoscape.Core | undefined>();
+  // const cyRef = React.useRef<cytoscape.Core | undefined>();
   const institution = searchParams.get('institution');
   const type = searchParams.get('type');
   const topic = searchParams.get('topic');
@@ -28,7 +28,7 @@ const Search = () => {
   const [data, setData] = useState<ResearchDataInterface>(initialValue);
   const [isLoading, setIsLoading] = useState(false);
 
-  const toast = useToast();
+  // const toast = useToast();
 
   const handleToggle = () => {
     setIsNetworkMap(!isNetworkMap);
@@ -266,9 +266,7 @@ const Search = () => {
           <div className='network-map'>
             <button className='topButton'>Network Map</button>
             {/* <img src={NetworkMap} alt='Network Map' /> */}
-            <GraphComponent
-              graphData={data?.graph}
-            />
+            <GraphComponent graphData={data?.graph} />
           </div>
         ) : (
           <div>

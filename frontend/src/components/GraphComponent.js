@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Orb } from '@memgraph/orb';
+import React, {useEffect, useRef, useState} from 'react';
+import {Orb} from '@memgraph/orb';
 
-const GraphComponent = ({ graphData }) => {
+const GraphComponent = ({graphData}) => {
   const graphContainerRef = useRef(null);
   const loaderOverlayRef = useRef(null);
   const detailsRef = useRef(null);
@@ -12,7 +12,7 @@ const GraphComponent = ({ graphData }) => {
       return; // Exit early if no data is provided
     }
 
-    const { nodes, edges } = graphData; // Destructure nodes and edges from graphData
+    const {nodes, edges} = graphData; // Destructure nodes and edges from graphData
 
     const container = graphContainerRef.current;
     const orb = new Orb(container);
@@ -87,7 +87,7 @@ const GraphComponent = ({ graphData }) => {
       loaderOverlayRef.current.style.display = 'flex';
     }
 
-    orb.data.setup({ nodes, edges });
+    orb.data.setup({nodes, edges});
 
     orb.events.on('node-click', (event) => {
       handleNodeClick(event);
@@ -113,26 +113,40 @@ const GraphComponent = ({ graphData }) => {
   const renderDetails = () => {
     if (!selectedNode) return null;
 
+    console.log('selectedNode', selectedNode);
+
     let html = '';
 
     if (selectedNode.type === 'INSTITUTION') {
-      html += `<a href="${selectedNode.id}" target="_blank">View on OpenAlex</a>`;
+      // html += `<a href="${selectedNode.id}" target="_blank">View on OpenAlex</a>`;
+      html += `<a href="${selectedNode.id}" target="_blank"><b>View on OpenAlex:</b> ${selectedNode.id}</a>`;
     } else if (selectedNode.type === 'AUTHOR') {
-      html += `<p><b>ID:</b> ${selectedNode.id}</p>`;
+      html += `<a href="${selectedNode.id}" target="_blank"><b>View on OpenAlex:</b> ${selectedNode.id}</a>`;
     } else if (selectedNode.type === 'TOPIC') {
-      html += `<a href="${selectedNode.id}" target="_blank">View on OpenAlex</a>`;
+      // html += `<a href="${selectedNode.id}" target="_blank">View on OpenAlex</a>`;
+      html += `<a href="${selectedNode.id}" target="_blank"><b>View on OpenAlex:</b> ${selectedNode.id}</a>`;
     }
 
-    return <div dangerouslySetInnerHTML={{ __html: html }} />;
+    return (
+      <div
+        className='ror'
+        style={{textDecoration: 'underline', marginTop: '10px'}}
+        dangerouslySetInnerHTML={{__html: html}}
+      />
+    );
   };
 
   return (
     <div>
-      <div ref={loaderOverlayRef} id="loader-overlay" style={{ display: 'none' }}>
+      <div ref={loaderOverlayRef} id='loader-overlay' style={{display: 'none'}}>
         Loading...
       </div>
-      <div ref={graphContainerRef} id="graph" style={{ height: '500px', width: '100%' }} />
-      <div ref={detailsRef} className="details" style={{ display: 'none' }}>
+      <div
+        ref={graphContainerRef}
+        id='graph'
+        style={{height: '500px', width: '100%'}}
+      />
+      <div ref={detailsRef} className='details' style={{display: 'none'}}>
         {renderDetails()}
       </div>
     </div>
