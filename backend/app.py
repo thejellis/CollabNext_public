@@ -59,7 +59,7 @@ def get_authors(institution, topic):
       PREFIX foaf: <http://xmlns.com/foaf/0.1/>
       PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
 
-      SELECT DISTINCT ?name ?institution ?topic ?author
+      SELECT DISTINCT ?name ?institution ?topic ?author ?workTitle
       WHERE {'{'}
         ?institution foaf:name "{institution}" .
         ?topic skos:prefLabel "{topic}" .
@@ -67,16 +67,22 @@ def get_authors(institution, topic):
         ?work dct:creator ?author .
         << ?work soa:hasTopic ?topic >> ?p ?o .
         ?author foaf:name ?name .
+        ?work <http://purl.org/dc/terms/title> ?workTitle .
       {'}'}
       """
       results = query_endpoint(query)
       authors = []
+      connecting_works = {}
       for entry in results:
          oa_link = entry['author']
          author_id = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
-         authors.append((entry['name'], author_id))
-         institution_id = entry['institution'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
-         topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
+         if author_id in connecting_works:
+           connecting_works[author_id].append(entry['workTitle'])
+         else:
+           authors.append((entry['name'], author_id))
+           institution_id = entry['institution'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
+           topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
+           connecting_works[author_id] = [entry['workTitle']]
       nodes = []
       edges = []
       institution_node = { 'id': institution_id, 'label': institution, "type": "INSTITUTION" } 
@@ -87,7 +93,8 @@ def get_authors(institution, topic):
         author_name = entry[0]
         author_id = entry[1]
         author_node = { 'id': author_id, 'label': author_name, "type": "AUTHOR" }
-        topic_edge = { 'id': f"""{author_id}-{topic_id}""", 'start': author_id, 'end': topic_id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC"}
+        workTitles = ', '.join(connecting_works[author_id])
+        topic_edge = { 'id': f"""{author_id}-{topic_id}""", 'start': author_id, 'end': topic_id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC", "connecting_works": workTitles}
         institution_edge = { 'id': f"""{author_id}-{institution_id}""" ,'start': author_id, 'end': institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"}
         nodes.append(author_node)
         if not topic_edge in edges:
