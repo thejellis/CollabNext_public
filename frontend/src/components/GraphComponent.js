@@ -135,16 +135,29 @@ const GraphComponent = ({graphData}) => {
     } else if (selectedNode.type === 'TOPIC') {
       // html += `<a href="${selectedNode.id}" target="_blank">View on OpenAlex</a>`;
       html += `<a href="${selectedNode.id}" target="_blank"><b>View on OpenAlex:</b> ${selectedNode.id}</a>`;
-    } else if (selectedNode.start_type == "AUTHOR") {
-      if (selectedNode.end_type == "TOPIC") {
+    } else if (selectedNode.start_type === 'AUTHOR') {
+      if (selectedNode.end_type === 'TOPIC') {
         html += `<b>Connecting Works:</b> ${selectedNode.connecting_works}`;
       }
     }
 
     return (
       <div
-        className='ror'
-        style={{textDecoration: 'underline', marginTop: '10px'}}
+        className={
+          selectedNode.start_type === 'AUTHOR' &&
+          selectedNode.end_type === 'TOPIC'
+            ? undefined
+            : 'ror'
+        }
+        style={
+          selectedNode.start_type === 'AUTHOR' &&
+          selectedNode.end_type === 'TOPIC'
+            ? {marginTop: '10px', color: 'black', fontWeight: 'bold'}
+            : {
+                textDecoration: 'underline',
+                marginTop: '10px',
+              }
+        }
         dangerouslySetInnerHTML={{__html: html}}
       />
     );
