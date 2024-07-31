@@ -1,11 +1,21 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Orb} from '@memgraph/orb';
+import {
+  Box,
+  Modal,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 const GraphComponent = ({graphData}) => {
   const graphContainerRef = useRef(null);
   const loaderOverlayRef = useRef(null);
-  const detailsRef = useRef(null);
+  // const detailsRef = useRef(null);
   const [selectedNode, setSelectedNode] = useState(null);
+  const {isOpen, onOpen, onClose} = useDisclosure();
 
   useEffect(() => {
     if (!graphData) {
@@ -70,12 +80,15 @@ const GraphComponent = ({graphData}) => {
         };
       },
       getEdgeStyle(edge) {
+        console.log(edge?.data?.connecting_works);
         return {
           color: '#999999',
           colorHover: '#1d1d1d',
           colorSelected: '#1d1d1d',
           fontSize: 3,
-          width: 0.3,
+          width: edge?.data?.connecting_works
+            ? edge?.data?.connecting_works / 100
+            : 0.3,
           widthHover: 0.9,
           widthSelected: 0.9,
           label: edge.data.label,
@@ -101,24 +114,26 @@ const GraphComponent = ({graphData}) => {
       const nodeData = event.node.data;
       console.log('Selected Node:', nodeData); // Log the selected node to the console
       setSelectedNode(nodeData);
+      onOpen();
     }
 
     function handleEdgeClick(event) {
       const edgeData = event.edge.data;
       console.log('Selected Edge:', edgeData);
       setSelectedNode(edgeData);
+      onOpen();
     }
 
     orb.view.render(() => {
       if (loaderOverlayRef.current) {
         loaderOverlayRef.current.style.display = 'none';
       }
-      if (detailsRef.current) {
-        detailsRef.current.style.display = 'block';
-      }
+      // if (detailsRef.current) {
+      //   detailsRef.current.style.display = 'block';
+      // }
       orb.view.recenter();
     });
-  }, [graphData]);
+  }, [graphData, onOpen]);
 
   const renderDetails = () => {
     if (!selectedNode) return null;
@@ -173,9 +188,19 @@ const GraphComponent = ({graphData}) => {
         id='graph'
         style={{height: '500px', width: '100%'}}
       />
-      <div ref={detailsRef} className='details' style={{display: 'none'}}>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>More Details</ModalHeader>
+          <Box mx='1.5rem' mb='2rem' className='details'>
+            {renderDetails()}
+          </Box>
+          <ModalCloseButton />
+        </ModalContent>
+      </Modal>
+      {/* <div ref={detailsRef} className='details' style={{display: 'none'}}>
         {renderDetails()}
-      </div>
+      </div> */}
     </div>
   );
 };

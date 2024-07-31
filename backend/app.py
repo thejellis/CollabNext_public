@@ -399,6 +399,23 @@ def query_endpoint(query):
 def get_default_graph():
   with open("default.json", "r") as file:
     graph = json.load(file)
+  nodes = graph['nodes']
+  edges = []
+  count = {}
+  for edge in graph['edges']:
+    if edge['label'] == 'researches':
+      if edge['start'] in count:
+        if count[edge['start']] < edge['connecting_works']:
+          count[edge['start']] = edge['connecting_works']
+      else:
+        count[edge['start']] = edge['connecting_works']
+  for edge in graph['edges']:
+    if edge['label'] == 'researches':
+      if count[edge['start']] == edge['connecting_works']:
+        edges.append(edge)
+    else:
+      edges.append(edge)
+  graph = {"nodes": nodes, "edges": edges}
   return {"graph": graph}
   
 
