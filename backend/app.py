@@ -402,10 +402,11 @@ def get_default_graph():
 
   return {"graph": graph}
 
-@app.route('/get-topic-space', methods=['POST'])
+@app.route('/get-topic-space-default-graph', methods=['POST'])
 def get_topic_space():
-  with open('topic_default.json', 'r') as file:
-    graph = json.load(file)
+  nodes= [{ "id": 1, 'label': "Physical Sciences", 'type': 'DOMAIN'}, { "id": 2, 'label': "Life Sciences", 'type': 'DOMAIN'}, { "id": 3, 'label': "Social Sciences", 'type': 'DOMAIN'}, { "id": 4, 'label': "Health Sciences", 'type': 'DOMAIN'}]
+  edges = []
+  graph = {"nodes": nodes, "edges": edges}
   return {"graph": graph}
   
 @app.route('/search-topic-space', methods=['POST'])
