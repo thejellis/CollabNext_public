@@ -399,33 +399,52 @@ def query_endpoint(query):
 def get_default_graph():
   with open("default.json", "r") as file:
     graph = json.load(file)
-  nodes = graph['nodes']
+
+  return {"graph": graph}
+
+@app.route('/get-topic-space-default-graph', methods=['POST'])
+def get_topic_space():
+  nodes= [{ "id": 1, 'label': "Physical Sciences", 'type': 'DOMAIN'}, { "id": 2, 'label': "Life Sciences", 'type': 'DOMAIN'}, { "id": 3, 'label': "Social Sciences", 'type': 'DOMAIN'}, { "id": 4, 'label': "Health Sciences", 'type': 'DOMAIN'}]
   edges = []
-  count = {}
-  for edge in graph['edges']:
-    if edge['label'] == 'researches':
-      if edge['start'] in count:
-        if count[edge['start']] < edge['connecting_works']:
-          count[edge['start']] = edge['connecting_works']
-      else:
-        count[edge['start']] = edge['connecting_works']
-  for edge in graph['edges']:
-    if edge['label'] == 'researches':
-      if count[edge['start']] == edge['connecting_works']:
-        edges.append(edge)
-    else:
-      edges.append(edge)
   graph = {"nodes": nodes, "edges": edges}
   return {"graph": graph}
   
+@app.route('/search-topic-space', methods=['POST'])
+def search_topic_space(search):
+  search = request.json.get('topic')
+  with open('topic_default.json', 'r') as file:
+    graph = json.load(file)
+  nodes = []
+  edges = []
+  for node in graph['nodes']:
+    node_additions = []
+    edge_additions = []
+    if node['label'] == search or node['subfield_name'] == search or node['field_name'] == search or node['domain_name'] == search:
+      topic_node = { 'id': node['id'], 'label': node['label'], 'type': 'TOPIC', "keywords":node['keywords'], "summary": node['summary'], "wikipedia_url": node['wikipedia_url']}
+      node_additions.append(topic_node)
+      subfield_node = { "id": node["subfield_id"], 'label': node['subfield_name'], 'type': 'SUBFIELD'}
+      node_additions.append(subfield_node)
+      field_node = { "id": node["field_id"], 'label': node['field_name'], 'type': 'FIELD'}
+      node_additions.append(field_node)
+      domain_node = { "id": node["domain_id"], 'label': node['domain_name'], 'type': 'DOMAIN'}
+      node_additions.append(domain_node)
+      topic_subfield = { 'id': f"""{node['id']}-{node['subfield_id']}""" ,'start': node['id'], 'end': node['subfield_id'], "label": "hasSubfield", "start_type": "TOPIC", "end_type": "SUBFIELD"}
+      edge_additions.append(topic_subfield)
+      subfield_field = { 'id': f"""{node['subfield_id']}-{node['field_id']}""" ,'start': node['subfield_id'], 'end': node['field_id'], "label": "hasField", "start_type": "SUBFIELD", "end_type": "FIELD"}
+      edge_additions.append(subfield_field)
+      field_domain = { 'id': f"""{node['field_id']}-{node['domain_id']}""" ,'start': node['field_id'], 'end': node['domain_id'], "label": "hasDomain", "start_type": "FIELD", "end_type": "DOMAIN"}
+      edge_additions.append(field_domain)
+    for a in node_additions:
+      if a not in nodes:
+        nodes.append(a)
+    for a in edge_additions:
+      if a not in edges:
+        edges.append(a)
+  final_graph = {"nodes": nodes, "edges": edges}
+  return {'graph': final_graph}
+
+
+
 
 if __name__ =='__main__':
   app.run()
-  """x,result = get_topics("Didier Contis", "Georgia Institute of Technology")
-  print(x)
-  for a in result['nodes']:
-    print(a)
-  print()
-  print()
-  for a in result['edges']:
-    print(a)"""
