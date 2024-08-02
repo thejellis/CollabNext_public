@@ -410,7 +410,7 @@ def get_topic_space():
   return {"graph": graph}
   
 @app.route('/search-topic-space', methods=['POST'])
-def search_topic_space(search):
+def search_topic_space():
   search = request.json.get('topic')
   with open('topic_default.json', 'r') as file:
     graph = json.load(file)
