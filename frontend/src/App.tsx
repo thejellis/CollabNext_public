@@ -1,6 +1,6 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
-import { Box, ChakraProvider } from '@chakra-ui/react';
+import {Box, ChakraProvider} from '@chakra-ui/react';
 
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
@@ -9,6 +9,7 @@ import About from './pages/About';
 import ContactUs from './pages/Contact';
 import Home from './pages/Home';
 import Search from './pages/Search';
+import TopicSearch from './pages/TopicSearch';
 
 function App() {
   return (
@@ -29,6 +30,9 @@ function App() {
           </Routes>
           <Routes>
             <Route path='/search' element={<Search />}></Route>
+          </Routes>
+          <Routes>
+            <Route path='/topic-search' element={<TopicSearch />}></Route>
           </Routes>
           <Routes>
             <Route path='/contact' element={<ContactUs />}></Route>

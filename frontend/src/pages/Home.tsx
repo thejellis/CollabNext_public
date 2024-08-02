@@ -190,6 +190,22 @@ const Home = () => {
           )}
         </Formik>
       </Box>
+      <Flex justifyContent={'center'} mt='1.5rem'>
+        <Button
+          width={{base: '165px', lg: '205px'}}
+          height='41px'
+          background='linear-gradient(180deg, #003057 0%, rgba(0, 0, 0, 0.5) 100%)'
+          borderRadius={{base: '4px', lg: '6px'}}
+          fontSize={{base: '13px', lg: '18px'}}
+          color='#FFFFFF'
+          fontWeight={'500'}
+          onClick={() => {
+            navigate(`topic-search`);
+          }}
+        >
+          Explore Topics
+        </Button>
+      </Flex>
     </Box>
   );
 };

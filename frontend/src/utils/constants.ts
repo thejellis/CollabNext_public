@@ -99,5 +99,4 @@ export const initialValue = {
   worksAreTopics: false,
   worksAreAuthors: false,
   link: '',
-  graph: {nodes: [], edges: []},
 };

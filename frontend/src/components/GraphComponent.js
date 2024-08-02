@@ -114,14 +114,14 @@ const GraphComponent = ({graphData}) => {
       const nodeData = event.node.data;
       console.log('Selected Node:', nodeData); // Log the selected node to the console
       setSelectedNode(nodeData);
-      onOpen();
+      nodeData?.type !== 'DOMAIN' && onOpen();
     }
 
     function handleEdgeClick(event) {
       const edgeData = event.edge.data;
       console.log('Selected Edge:', edgeData);
       setSelectedNode(edgeData);
-      onOpen();
+      edgeData?.connecting_works && onOpen();
     }
 
     orb.view.render(() => {
