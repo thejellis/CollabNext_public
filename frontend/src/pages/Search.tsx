@@ -85,6 +85,7 @@ const Search = () => {
               worksAreTopics: false,
               link: data?.metadata?.oa_link,
               graph: data?.graph,
+              hbcu: data?.metadata?.hbcu,
             });
             setIsLoading(false);
           })
@@ -271,7 +272,10 @@ const Search = () => {
         ) : (
           <div>
             <button className='topButton'>List Map</button>
-            <h2>{data?.institution_name}</h2>
+            <h2>
+              {data?.institution_name}
+              {data?.hbcu ? ' - HBCU' : ''}
+            </h2>
             <h2 style={{marginTop: '.4rem'}}>{data?.researcher_name}</h2>
             <div className='list-map'>
               <div>

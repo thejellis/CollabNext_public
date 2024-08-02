@@ -11,4 +11,5 @@ export interface ResearchDataInterface {
   worksAreAuthors: boolean;
   link: string;
   graph?: {nodes: any[]; edges: any[]};
+  hbcu?: boolean;
 }
