@@ -2,6 +2,9 @@ from flask import Flask, send_from_directory, request, jsonify
 import requests
 from flask_cors import CORS
 import json
+import mysql.connector
+from mysql.connector import Error
+import pandas as pd
 
 app= Flask(__name__, static_folder='build', static_url_path='/')
 CORS(app)
@@ -245,7 +248,6 @@ def get_works(author, topic, institution):
 
       return {"titles": titles}, {"nodes": nodes, "edges": edges}
 
-
 def get_institution_metadata(institution):
   query = f"""
   SELECT ?ror ?workscount ?citedcount ?homepage ?institution (COUNT(distinct ?people) as ?peoplecount)
@@ -279,7 +281,8 @@ def get_institution_metadata(institution):
 
   nodes = []
   edges = []
-  nodes.append({ 'id': oa_link, 'label': institution, 'type': 'INSTITUTION' })
+  hbcu = is_HBCU(oa_link)
+  nodes.append({ 'id': oa_link, 'label': institution, 'type': 'INSTITUTION', 'hbcu': hbcu })
   results2 = query_endpoint(query2)
   for topic in results2:
     topic_id = topic['topic']
@@ -288,7 +291,7 @@ def get_institution_metadata(institution):
     node_edge = { 'id': f"""{oa_link}-{topic_id}""", 'start': oa_link, 'end': topic_id, "label": "researches", "start_type": "INSTITUTION", "end_type": "TOPIC"}
     nodes.append(node)
     edges.append(node_edge)
-  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link}, {"nodes": nodes, "edges": edges}
+  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link, "hbcu": hbcu}, {"nodes": nodes, "edges": edges}
 
 def get_topic_metadata(topic):
    query = f"""
@@ -443,8 +446,44 @@ def search_topic_space():
   final_graph = {"nodes": nodes, "edges": edges}
   return {'graph': final_graph}
 
+def create_connection(host_name, user_name, user_password, db_name):
+  """Create a database connection and return the connection object."""
+  connection = None
+  try:
+      connection = mysql.connector.connect(
+          host=host_name,
+          user=user_name,
+          passwd=user_password,
+          database=db_name
+      )
+      print("Connection to MySQL DB successful")
+  except Error as e:
+      print(f"The error '{e}' occurred")
+  
+  return connection
 
+def execute_read_query(connection, query):
+  """Execute a read query and return the results."""
+  cursor = connection.cursor()
+  try:
+      cursor.execute(query)
+      result = cursor.fetchall()
+      return result
+  except Error as e:
+      print(f"The error '{e}' occurred")
+
+def is_HBCU(id):
+  print("hi")
+  connection = create_connection('openalexalpha.mysql.database.azure.com', 'openalexreader', 'collabnext2024reader!', 'openalex')
+  id = id.replace('https://semopenalex.org/institution/', "")
+  query = f"""SELECT HBCU FROM institutions_filtered WHERE id = "{id}";"""
+  result = execute_read_query(connection, query)
+  if result == [(1,)]:
+    return True
+  else:
+    return False
 
 
 if __name__ =='__main__':
-  app.run()
+  print(get_institution_metadata("Georgia Institute of Technology"))
+  #app.run()
