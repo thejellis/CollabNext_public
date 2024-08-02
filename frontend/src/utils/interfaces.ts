@@ -10,5 +10,5 @@ export interface ResearchDataInterface {
   worksAreTopics: boolean;
   worksAreAuthors: boolean;
   link: string;
-  graph: {nodes: any[]; edges: any[]};
+  graph?: {nodes: any[]; edges: any[]};
 }
