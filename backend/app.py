@@ -474,9 +474,10 @@ def execute_read_query(connection, query):
 
 def is_HBCU(id):
   connection = create_connection('openalexalpha.mysql.database.azure.com', 'openalexreader', 'collabnext2024reader!', 'openalex')
-  id = id.replace('https://semopenalex.org/institution/', "")
+  id = id.replace('https://openalex.org/institutions/', "")
   query = f"""SELECT HBCU FROM institutions_filtered WHERE id = "{id}";"""
   result = execute_read_query(connection, query)
+  print(id)
   if result == [(1,)]:
     return True
   else:
