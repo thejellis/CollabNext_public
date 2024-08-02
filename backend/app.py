@@ -473,7 +473,6 @@ def execute_read_query(connection, query):
       print(f"The error '{e}' occurred")
 
 def is_HBCU(id):
-  print("hi")
   connection = create_connection('openalexalpha.mysql.database.azure.com', 'openalexreader', 'collabnext2024reader!', 'openalex')
   id = id.replace('https://semopenalex.org/institution/', "")
   query = f"""SELECT HBCU FROM institutions_filtered WHERE id = "{id}";"""
@@ -485,5 +484,4 @@ def is_HBCU(id):
 
 
 if __name__ =='__main__':
-  print(get_institution_metadata("Georgia Institute of Technology"))
-  #app.run()
+  app.run()
