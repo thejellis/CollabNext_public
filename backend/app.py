@@ -422,7 +422,7 @@ def search_topic_space():
   for node in graph['nodes']:
     node_additions = []
     edge_additions = []
-    if node['label'] == search or node['subfield_name'] == search or node['field_name'] == search or node['domain_name'] == search:
+    if node['label'] == search or node['subfield_name'] == search or node['field_name'] == search or node['domain_name'] == search or search in node['keywords'].split("; "):
       topic_node = { 'id': node['id'], 'label': node['label'], 'type': 'TOPIC', "keywords":node['keywords'], "summary": node['summary'], "wikipedia_url": node['wikipedia_url']}
       node_additions.append(topic_node)
       subfield_node = { "id": node["subfield_id"], 'label': node['subfield_name'], 'type': 'SUBFIELD'}
