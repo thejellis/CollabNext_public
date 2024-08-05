@@ -402,8 +402,35 @@ def query_endpoint(query):
 def get_default_graph():
   with open("default.json", "r") as file:
     graph = json.load(file)
-
-  return {"graph": graph}
+  nodes = []
+  edges = []
+  cur_nodes = graph['nodes']
+  cur_edges = graph['edges']
+  most = {}
+  needed_topics = set()
+  for edge in cur_edges:
+    if edge['start'] in most:
+      if edge['connecting_works'] > most[edge['start']]:
+        most[edge['start']] = edge['connecting_works']
+    else:
+      most[edge['start']] = edge['connecting_works']
+  for edge in cur_edges:
+    if most[edge['start']] == edge['connecting_works']:
+      edges.append(edge)
+      needed_topics.add(edge['end'])
+  for node in cur_nodes:
+    if node['type'] == 'TOPIC':
+      if node['id'] in needed_topics:
+        nodes.append(node)
+    else:
+      nodes.append(node)
+  final_graph = {"nodes": nodes, "edges": edges}
+  count = 0
+  for a in cur_nodes:
+    if a['type'] == "INSTITUTION":
+      count = count + 1
+  print(count)
+  return {"graph": final_graph}
 
 @app.route('/get-topic-space-default-graph', methods=['POST'])
 def get_topic_space():
