@@ -342,7 +342,7 @@ def get_author_metadata(author):
     WHERE {'{'}
     ?author <http://xmlns.com/foaf/0.1/name> "{author}" .
     ?author <https://semopenalex.org/ontology/citedByCount> ?cite_count .
-    ?author <https://dbpedia.org/ontology/orcidId> ?orcid .
+    OPTIONAL {"{"}?author <https://dbpedia.org/ontology/orcidId> ?orcid .{"}"}
     ?author <https://semopenalex.org/ontology/worksCount> ?works_count .
     ?author <http://www.w3.org/ns/org#memberOf> ?current_institution .
     ?current_institution <http://xmlns.com/foaf/0.1/name> ?current_institution_name .
@@ -362,7 +362,7 @@ def get_author_metadata(author):
    """
    results = query_endpoint(query)
    cited_by_count = results[0]['cite_count']
-   orcid = results[0]['orcid']
+   orcid = results[0]['orcid'] if 'orcid' in results[0] else ''
    work_count = results[0]['works_count']
    current_institution = results[0]['current_institution_name']
    oa_link = results[0]['author']
