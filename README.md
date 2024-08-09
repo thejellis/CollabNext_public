@@ -31,8 +31,8 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-an
 
 5. Install React app dependencies
 `npm install --legacy-peer-deps`<br>
-`npm install @memgraph/org` <br>
-If the above line isn't working try: `npm i @memgraph/orb` <br>
+`npm install @memgraph/orb` <br>
+
 Create `.env.local` file in the outermost folder level (in the collabnext_alpha folder), copy everthing in `.env.example` and paste in the`.env.local` file
 
 6. Run React app locally<br>
