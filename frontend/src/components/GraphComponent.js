@@ -52,7 +52,7 @@ const GraphComponent = ({graphData}) => {
           return {
             ...basicStyle,
             size: 10,
-            color: '#0df2c9',
+            color: '#332288',
             zIndex: 1,
           };
         }
@@ -61,7 +61,7 @@ const GraphComponent = ({graphData}) => {
           return {
             ...basicStyle,
             size: 10,
-            color: '#245cc3',
+            color: '#117733',
             zIndex: 1,
           };
         }
@@ -70,7 +70,43 @@ const GraphComponent = ({graphData}) => {
           return {
             ...basicStyle,
             size: 10,
-            color: '#f8ee35',
+            color: '#44AA99',
+            zIndex: 1,
+          };
+        }
+
+        if (node.data.type === 'INSTITUTION') {
+          return {
+            ...basicStyle,
+            size: 10,
+            color: '#88CCEE',
+            zIndex: 1,
+          };
+        }
+
+        if (node.data.type === 'DOMAIN') {
+          return {
+            ...basicStyle,
+            size: 10,
+            color: '#DDCC77',
+            zIndex: 1,
+          };
+        }
+
+        if (node.data.type === 'FIELD') {
+          return {
+            ...basicStyle,
+            size: 10,
+            color: '#CC6677',
+            zIndex: 1,
+          };
+        }
+
+        if (node.data.type === 'SUBFIELD') {
+          return {
+            ...basicStyle,
+            size: 10,
+            color: '#AA4499',
             zIndex: 1,
           };
         }
@@ -80,14 +116,14 @@ const GraphComponent = ({graphData}) => {
         };
       },
       getEdgeStyle(edge) {
-        console.log(edge?.data?.connecting_works);
+        console.log(edge?.data?.connecting_authors);
         return {
           color: '#999999',
           colorHover: '#1d1d1d',
           colorSelected: '#1d1d1d',
           fontSize: 3,
-          width: edge?.data?.connecting_works
-            ? edge?.data?.connecting_works / 100
+          width: edge?.data?.connecting_authors
+            ? edge?.data?.connecting_authors / 100
             : 0.3,
           widthHover: 0.9,
           widthSelected: 0.9,
@@ -153,6 +189,10 @@ const GraphComponent = ({graphData}) => {
     } else if (selectedNode.start_type === 'AUTHOR') {
       if (selectedNode.end_type === 'TOPIC') {
         html += `<b>Connecting Works:</b> ${selectedNode.connecting_works}`;
+      }
+    } else if (selectedNode.start_type === "INSTITUTION") {
+      if (selectedNode.end_type === "SUBFIELD") {
+        html += `<b>Connecting Authors:</b> ${selectedNode.connecting_authors}`;
       }
     }
 
