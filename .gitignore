@@ -61,3 +61,6 @@ Desktop.ini
 
 # Other
 *.log
+
+# CollabNext
+frontend/package-lock.json
