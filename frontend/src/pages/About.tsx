@@ -126,14 +126,14 @@ const About = () => {
             </a>{' '}
             is a very rough proof-of-concept. We are developing future versions,
             moving from alpha to beta to production over the next three years
-            thanks to funding from the NSF. We are part of the Prototype{' '}
+            thanks to funding from the NSF. We are part of the{' '}
             <a
               href='https://www.proto-okn.net/'
               target='_blank'
               rel='noreferrer'
               style={{color: 'cornsilk', textDecoration: 'underline'}}
             >
-              Open Knowledge Network
+              Prototype Open Knowledge Network
             </a>{' '}
             (aka ProtoOKN).
           </Text>
