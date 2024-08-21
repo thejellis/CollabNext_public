@@ -8,6 +8,11 @@ import pandas as pd
 
 app= Flask(__name__, static_folder='build', static_url_path='/')
 CORS(app)
+with open('institutions.csv', 'r') as fil:
+    autofill_inst_list = fil.read().split(',\n')
+with open('topics.csv', 'r') as fil:
+    autofill_topics_list = fil.read().split('\n')
+
 
 @app.route('/')
 def index():
@@ -509,7 +514,26 @@ def is_HBCU(id):
     return True
   else:
     return False
+  
+@app.route('/autofill-institutions', methods=['POST'])
+def autofill_institutions():
+  inst = request.json.get('institution')
+  possible_searches = []
+  for i in autofill_inst_list:
+    if inst.lower() in i.lower():
+      possible_searches.append(i)
+  return {"possible_searches": possible_searches}
+
+@app.route('/autofill-topics', methods=['POST'])
+def autofill_topics():
+  topic = request.json.get('topic')
+  possible_searches = []
+  for i in autofill_topics_list:
+    if topic.lower() in i.lower():
+      possible_searches.append(i)
+  return {"possible_searches": possible_searches}
 
 
 if __name__ =='__main__':
   app.run()
+
