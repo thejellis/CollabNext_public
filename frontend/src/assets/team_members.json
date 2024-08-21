@@ -277,6 +277,18 @@
       "image": "/assets/pictures/team_members/xiang_zhao.webp"
     },
     {
+      "firstName": "Ikechukwu",
+      "lastName": "Mgbemele",
+      "email": "imgbemele@gmail.com",
+      "institutionalAffiliation": "Fisk University",
+      "role": "Student",
+      "biosketch": "Ikechukwu is an enthusiastic and passionate computer science major at Fisk University exploring novel and intelligent techniques for building great software products which users enjoy using. He is very passionate, eager to learn, collaborative, and dedicated. He has a 1 year software engineering experience at Gilah Global Limited where he previously interned and a 6 months (and counting) software engineering experience here at Georgia Tech. He is very proficient in Python, Java, and TypeScript programming languages, and have developed web and mobile applications using Java, Python, React.js, Next.js, TypeScript, Redux-toolkit, Nodejs with Expressjs, Chakra UI, SCSS, MongoDb, MySql, Bootstrap, and TailwindCSS, with most the source codes on Github. He is working as a Frontend Developer on this project.",
+      "linkedin": "https://www.linkedin.com/in/ikechukwu-mgbemele/",
+      "github": "https://github.com/ikaay1",
+      "website": "https://ikechi.vercel.app",
+      "image": "/assets/pictures/team_members/ikechukwu_mgbemele.webp"
+    },
+    {
       "firstName": "Robert",
       "lastName": "Briggs Jr.",
       "email": "robert.briggs@morehouse.edu",
@@ -311,18 +323,6 @@
       "github": "https://github.com/ILIAink",
       "website": "http://ilia.ink/",
       "image": "/assets/pictures/team_members/ilia_khalighi.webp"
-    },
-    {
-      "firstName": "Ikechukwu",
-      "lastName": "Mgbemele",
-      "email": "imgbemele@gmail.com",
-      "institutionalAffiliation": "Fisk University",
-      "role": "Student",
-      "biosketch": "I am an enthusiastic and passionate computer science major at Fisk University exploring novel and intelligent techniques for building great software products which users enjoy using. I am very passionate, eager to learn, collaborative, and dedicated. My goal is to build products that people love using. I have a 1 year software engineering experience at Gilah Global Limited where I previously interned and a 6 months (and counting) software engineering experience here at Georgia Tech. I am very proficient in Python, Java, and TypeScript programming languages, and have developed web and mobile applications using Java, Python, React.js, Next.js, TypeScript, Redux-toolkit, Nodejs with Expressjs, Chakra UI, SCSS, MongoDb, MySql, Bootstrap, and TailwindCSS, with most the source codes on Github. I am open to opportunities for experience and self-improvement.",
-      "linkedin": "https://www.linkedin.com/in/ikechukwu-mgbemele/",
-      "github": "https://github.com/ikaay1",
-      "website": "https://ikechi.vercel.app",
-      "image": "/assets/pictures/team_members/ikechukwu_mgbemele.webp"
     },
     {
       "firstName": "Ramkrishna",

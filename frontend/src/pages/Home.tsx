@@ -1,19 +1,21 @@
-import {Field, Form, Formik} from 'formik';
-import React from 'react';
-import {useNavigate} from 'react-router-dom';
+import { Field, Form, Formik } from 'formik';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 
 import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  FormErrorMessage,
-  Input,
-  Select,
-  SimpleGrid,
-  Text,
+	Box,
+	Button,
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	Input,
+	Select,
+	SimpleGrid,
+	Text,
 } from '@chakra-ui/react';
+
+import { baseUrl } from '../utils/constants';
 
 const validateSchema = Yup.object().shape({
   institution: Yup.string().notRequired(),
@@ -31,7 +33,52 @@ const initialValues = {
 
 const Home = () => {
   const navigate = useNavigate();
+  const [suggestedInstitutions, setSuggestedInstitutions] = useState([]);
+  const [suggestedTopics, setSuggestedTopics] = useState([]);
   // const toast = useToast();
+
+  const handleChange = (text: string, topic: boolean) => {
+    fetch(
+      !topic
+        ? `${baseUrl}/autofill-institutions`
+        : `${baseUrl}/autofill-topics`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+          topic
+            ? {
+                topic: text,
+              }
+            : {
+                institution: text,
+              },
+        ),
+      },
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (topic) {
+          setSuggestedTopics(data?.possible_searches);
+        } else {
+          setSuggestedInstitutions(data?.possible_searches);
+        }
+        // setIsLoading(false);
+      })
+      .catch((error) => {
+        // setIsLoading(false);
+        if (topic) {
+          setSuggestedTopics([]);
+        } else {
+          setSuggestedInstitutions([]);
+        }
+        console.log(error);
+      });
+  };
+  console.log(suggestedTopics);
   return (
     <Box w={{lg: '700px'}} mx='auto' mt='1.5rem'>
       <Text
@@ -91,15 +138,34 @@ const Home = () => {
                           isInvalid={form.errors[key] && form.touched[key]}
                         >
                           {text === 'Organization' ? (
-                            <Input
-                              variant={'flushed'}
-                              focusBorderColor='white'
-                              borderBottomWidth={'2px'}
-                              color='white'
-                              fontSize={{lg: '20px'}}
-                              textAlign={'center'}
-                              {...field}
-                            />
+                            <>
+                              <Input
+                                variant={'flushed'}
+                                focusBorderColor='white'
+                                borderBottomWidth={'2px'}
+                                color='white'
+                                fontSize={{lg: '20px'}}
+                                textAlign={'center'}
+                                list='institutions'
+                                {...field}
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  handleChange(field.value, false);
+                                }}
+                              />
+                              <datalist id='institutions'>
+                                {suggestedInstitutions?.map(
+                                  (institution: string) => (
+                                    <option
+                                      key={institution}
+                                      value={institution}
+                                    >
+                                      {institution}
+                                    </option>
+                                  ),
+                                )}
+                              </datalist>
+                            </>
                           ) : (
                             <Select
                               variant={'flushed'}
@@ -153,8 +219,24 @@ const Home = () => {
                             color='white'
                             fontSize={{lg: '20px'}}
                             textAlign={'center'}
+                            list={key === 'topic' && 'topics'}
                             {...field}
+                            onChange={
+                              key === 'topic'
+                                ? (e) => {
+                                    field.onChange(e);
+                                    handleChange(field.value, true);
+                                  }
+                                : field.onChange
+                            }
                           />
+                          <datalist id='topics'>
+                            {suggestedTopics?.map((topic: string) => (
+                              <option key={topic} value={topic}>
+                                {topic}
+                              </option>
+                            ))}
+                          </datalist>
                           <FormErrorMessage>
                             {form.errors[key]}
                           </FormErrorMessage>
