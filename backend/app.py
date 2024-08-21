@@ -8,6 +8,11 @@ import pandas as pd
 
 app= Flask(__name__, static_folder='build', static_url_path='/')
 CORS(app)
+with open('institutions.csv', 'r') as fil:
+    autofill_inst_list = fil.read().split(',\n')
+with open('topics.csv', 'r') as fil:
+    autofill_topics_list = fil.read().split('\n')
+
 
 @app.route('/')
 def index():
@@ -88,7 +93,7 @@ def get_authors(institution, topic):
            connecting_works[author_id] = [entry['workTitle']]
       nodes = []
       edges = []
-      institution_node = { 'id': institution_id, 'label': institution, "type": "INSTITUTION" } 
+      institution_node = { 'id': institution_id, 'label': institution, "type": "INSTITUTION" }
       topic_node = { 'id': topic_id, 'label': topic, "type": "TOPIC" }
       nodes.append(institution_node)
       nodes.append(topic_node)
@@ -139,7 +144,7 @@ def get_topics(author, institution):
          author_id = entry['author'].replace('semopenalex', 'openalex').replace('author', 'authors')
       edges = []
       nodes = []
-      institution_node = { 'id': institution_id, 'label': institution, "type": "INSTITUTION" } 
+      institution_node = { 'id': institution_id, 'label': institution, "type": "INSTITUTION" }
       author_node = { 'id': author_id, 'label': author, "type": "AUTHOR" }
       nodes.append(institution_node)
       nodes.append(author_node)
@@ -156,7 +161,7 @@ def get_topics(author, institution):
       topic_list = []
       for a in topics:
         topic_list.append(a[0])
-      
+
       return {"names": topic_list}, {"nodes": nodes, "edges": edges}
 
 def get_works(author, topic, institution):
@@ -187,10 +192,10 @@ def get_works(author, topic, institution):
          topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
          institution_id = entry['institution'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
          titles.append(entry['name'])
-      
+
       nodes = []
       edges = []
-      author_node = { 'id': author_id, 'label': author, 'type': 'AUTHOR' } 
+      author_node = { 'id': author_id, 'label': author, 'type': 'AUTHOR' }
       topic_node = { 'id': topic_id, 'label': topic, 'type': 'TOPIC' }
       institution_node = { 'id': institution_id, 'label': institution, 'type': 'INSTITUTION' }
       nodes.append(author_node)
@@ -198,9 +203,9 @@ def get_works(author, topic, institution):
       nodes.append(institution_node)
       edges.append({'id': f"""{author_id}-{institution_id}""", 'start': author_id, 'end': institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
       for work in titles:
-        work_node = { 'id': work, 'label': work, 'type': 'WORK' } 
+        work_node = { 'id': work, 'label': work, 'type': 'WORK' }
         work_edge = { 'id': f"""{work}-{author_id}""", 'start': work, 'end': author_id, 'label': 'authored' }
-        topic_edge = { 'id': f"""{work}-{topic_id}""", 'start': work, 'end': topic_id, 'label': 'hasTopic' } 
+        topic_edge = { 'id': f"""{work}-{topic_id}""", 'start': work, 'end': topic_id, 'label': 'hasTopic' }
         nodes.append(work_node)
         edges.append(work_edge)
         if not topic_edge in edges:
@@ -233,14 +238,14 @@ def get_works(author, topic, institution):
 
       nodes = []
       edges = []
-      author_node = { 'id': author_id, 'label': author, 'type': 'AUTHOR' } 
+      author_node = { 'id': author_id, 'label': author, 'type': 'AUTHOR' }
       topic_node = { 'id': topic_id, 'label': topic, 'type': 'TOPIC' }
       nodes.append(author_node)
       nodes.append(topic_node)
       for work in titles:
-        work_node = { 'id': work, 'label': work, 'type': 'WORK' } 
+        work_node = { 'id': work, 'label': work, 'type': 'WORK' }
         work_edge = { 'id': f"""{work}-{author_id}""", 'start': work, 'end': author_id, 'label': 'authored' }
-        topic_edge = { 'id': f"""{work}-{topic_id}""", 'start': work, 'end': topic_id, 'label': 'hasTopic' } 
+        topic_edge = { 'id': f"""{work}-{topic_id}""", 'start': work, 'end': topic_id, 'label': 'hasTopic' }
         nodes.append(work_node)
         edges.append(work_edge)
         if not topic_edge in edges:
@@ -438,7 +443,7 @@ def get_topic_space():
   edges = []
   graph = {"nodes": nodes, "edges": edges}
   return {"graph": graph}
-  
+
 @app.route('/search-topic-space', methods=['POST'])
 def search_topic_space():
   search = request.json.get('topic')
@@ -486,7 +491,7 @@ def create_connection(host_name, user_name, user_password, db_name):
       print("Connection to MySQL DB successful")
   except Error as e:
       print(f"The error '{e}' occurred")
-  
+
   return connection
 
 def execute_read_query(connection, query):
@@ -509,6 +514,24 @@ def is_HBCU(id):
     return True
   else:
     return False
+
+@app.route('/autofill-institutions', methods=['POST'])
+def autofill_institutions():
+  inst = request.json.get('institution')
+  possible_searches = []
+  for i in autofill_inst_list:
+    if inst.lower() in i.lower():
+      possible_searches.append(i)
+  return {"possible_searches": possible_searches}
+
+@app.route('/autofill-topics', methods=['POST'])
+def autofill_topics():
+  topic = request.json.get('topic')
+  possible_searches = []
+  for i in autofill_topics_list:
+    if topic.lower() in i.lower():
+      possible_searches.append(i)
+  return {"possible_searches": possible_searches}
 
 
 if __name__ =='__main__':
