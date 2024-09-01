@@ -1,16 +1,16 @@
 import '../styles/Search.css';
 
-import React, {useEffect, useState} from 'react';
-import {Circles} from 'react-loader-spinner';
-import {useSearchParams} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Circles } from 'react-loader-spinner';
+import { useSearchParams } from 'react-router-dom';
 
-import {Box, Button, Text} from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 
 // import CytoscapeComponent from 'react-cytoscapejs';
 import GraphComponent from '../components/GraphComponent';
 // import NetworkMap from '../assets/NetworkMap.png';
-import {baseUrl, initialValue} from '../utils/constants';
-import {ResearchDataInterface} from '../utils/interfaces';
+import { baseUrl, initialValue } from '../utils/constants';
+import { ResearchDataInterface } from '../utils/interfaces';
 
 const Search = () => {
   // console.log(baseUrl);
@@ -318,8 +318,8 @@ const Search = () => {
                         handleSearch(eachWork);
                       }
                       if (data?.worksAreAuthors) {
-                        setResearcherType(eachWork);
-                        handleSearch(eachWork);
+                        setResearcherType(eachWork[0]);
+                        handleSearch(eachWork[0]);
                       }
                     }}
                     cursor={
@@ -334,7 +334,7 @@ const Search = () => {
                         : 'none'
                     }
                   >
-                    {eachWork}
+                    {data.worksAreAuthors ? eachWork[0] : eachWork}
                   </Text>
                 ))}
               </div>
