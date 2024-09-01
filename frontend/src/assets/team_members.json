@@ -1,5 +1,5 @@
 {
-  "members": [
+  "leadership": [
     {
       "firstName": "Lew",
       "lastName": "Lefton",
@@ -59,7 +59,10 @@
       "github": "",
       "website": "https://kexinrong.github.io/",
       "image": "/assets/pictures/team_members/kexin_rong.webp"
-    },
+    }
+  ],
+
+  "advisory": [
     {
       "firstName": "Sufyan",
       "lastName": "Baksh",
@@ -275,7 +278,9 @@
       "github": "",
       "website": "",
       "image": "/assets/pictures/team_members/xiang_zhao.webp"
-    },
+    }
+  ],
+  "students": [
     {
       "firstName": "Ikechukwu",
       "lastName": "Mgbemele",
