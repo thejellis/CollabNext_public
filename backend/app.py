@@ -27,29 +27,63 @@ def initial_search():
   type = request.json.get('type')
   topic = request.json.get('topic')
   if institution and researcher and topic:
-    works, graph = get_works(researcher, topic, institution)
+    keywords = get_topics_from_keyword(topic)
+    final_graph = {"nodes": [], "edges": []}
+    final_topic_data = []
+    final_works = []
+    for t in keywords:
+      works, graph = get_works(researcher, t, institution)
+      topic_data, aGraph = get_topic_metadata(t)
+      final_graph = combine_graphs(final_graph, graph)
+      if not works['titles'] == []:
+        final_works = list(set(final_works + works['titles']))
+        final_topic_data.append(topic_data)
     institution_data, aGraph = get_institution_metadata(institution)
-    researcher_data, aGraph = get_author_metadata(researcher)
-    topic_data, aGraph = get_topic_metadata(topic)
-    results = {"works": works, "institution_metadata": institution_data, "author_metadata": researcher_data, "topic_metadata": topic_data, "graph": graph}
+    researcher_data, aGraph = get_author_metadata(researcher)   
+    results = {"works": {"titles": final_works}, "institution_metadata": institution_data, "author_metadata": researcher_data, "topic_metadata": final_topic_data, "graph": final_graph}
   elif institution and researcher:
     institution_data, aGraph = get_institution_metadata(institution)
     researcher_data, aGraph = get_author_metadata(researcher)
     topics, graph = get_topics(researcher, institution)
     results = {"topics": topics, "institution_metadata": institution_data, "author_metadata": researcher_data, "graph": graph}
   elif institution and topic:
-    authors, graph = get_authors(institution, topic)
+    keywords = get_topics_from_keyword(topic)
+    final_graph = {"nodes": [], "edges": []}
+    final_authors = []
+    final_topic_data = []
+    for t in keywords:
+      authors, graph = get_authors(institution, t)
+      topic_data, aGraph = get_topic_metadata(t)
+      final_graph = combine_graphs(final_graph, graph)
+      if not authors['names'] == []:
+        final_authors = list(set(final_authors + authors['names']))
+        final_topic_data.append(topic_data)
+      print("Topic Complete: " + str(t))
     institution_data, aGraph = get_institution_metadata(institution)
-    topic_data, aGraph = get_topic_metadata(topic)
-    results = {"authors": authors, "institution_metadata": institution_data, "topic_metadata": topic_data, "graph": graph}
+    results = {"authors": {"names": final_authors}, "institution_metadata": institution_data, "topic_metadata": final_topic_data, "graph": final_graph}
   elif researcher and topic:
-    works, graph = get_works(researcher, topic, "")
+    keywords = get_topics_from_keyword(topic)
+    final_graph = {"nodes": [], "edges": []}
+    final_topic_data = []
+    final_works = []
+    for t in keywords:
+      works, graph = get_works(researcher, t, "")
+      topic_data, aGraph = get_topic_metadata(t)
+      final_graph = combine_graphs(final_graph, graph)
+      if not works['titles'] == []:
+        final_works = list(set(final_works + works['titles']))
+        final_topic_data.append(topic_data)
     researcher_data, aGraph = get_author_metadata(researcher)
-    topic_data, aGraph = get_topic_metadata(topic)
-    results = {"works": works, "author_metadata": researcher_data, "topic_metadata": topic_data, "graph": graph}
+    results = {"works": {"titles": final_works}, "author_metadata": researcher_data, "topic_metadata": final_topic_data, "graph": final_graph}
   elif topic:
-    data, graph = get_topic_metadata(topic)
-    results = {"metadata": data, "graph": graph}
+    keywords = get_topics_from_keyword(topic)
+    final_graph = {"nodes": [], "edges": []}
+    final_metadata = []
+    for t in keywords:
+      data, graph = get_topic_metadata(t)
+      final_graph = combine_graphs(final_graph, graph)
+      final_metadata.append(data)
+    results = {"metadata": final_metadata, "graph": final_graph}
   elif institution:
     data, graph = get_institution_metadata(institution)
     results = {"metadata": data, "graph": graph}
@@ -76,11 +110,13 @@ def get_authors(institution, topic):
         << ?work soa:hasTopic ?topic >> ?p ?o .
         ?author foaf:name ?name .
         ?work <http://purl.org/dc/terms/title> ?workTitle .
-      {'}'}
+      {'}'}LIMIT 10
       """
       results = query_endpoint(query)
       authors = []
       connecting_works = {}
+      if results == []:
+        return {"names": authors}, {"nodes": [], "edges": []}
       for entry in results:
          oa_link = entry['author']
          author_id = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
@@ -187,6 +223,8 @@ def get_works(author, topic, institution):
       """
       results = query_endpoint(query)
       titles = []
+      if results == []:
+        return {"titles": titles}, {"nodes": [], "edges": []}
       for entry in results:
          author_id = entry['author'].replace('semopenalex', 'openalex').replace('author', 'authors')
          topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
@@ -213,7 +251,6 @@ def get_works(author, topic, institution):
 
       return {"titles": titles}, {"nodes": nodes, "edges": edges}
    elif author and topic:
-      #Done
       query = f"""
       PREFIX soa: <https://semopenalex.org/ontology/>
       PREFIX dct: <http://purl.org/dc/terms/>
@@ -231,6 +268,8 @@ def get_works(author, topic, institution):
       """
       results = query_endpoint(query)
       titles = []
+      if results == []:
+        return {"titles": titles}, {"nodes": [], "edges": []}
       for entry in results:
          author_id = entry['author'].replace('semopenalex', 'openalex').replace('author', 'authors')
          topic_id = entry['topic'].replace('semopenalex', 'openalex').replace('topic', 'topics')
@@ -339,7 +378,7 @@ def get_topic_metadata(topic):
      nodes.append(node)
      edges.append(node_edge)
 
-   return {"works_count": works_count, "cited_by_count": cited_by_count, "description": description, "oa_link": oa_link}, {"nodes": nodes, "edges": edges}
+   return {"name": topic, "works_count": works_count, "cited_by_count": cited_by_count, "description": description, "oa_link": oa_link}, {"nodes": nodes, "edges": edges}
 
 def get_author_metadata(author):
    query = f"""
@@ -533,6 +572,27 @@ def autofill_topics():
       possible_searches.append(i)
   return {"possible_searches": possible_searches}
 
+def get_topics_from_keyword(keyword):
+  query = f"""
+  SELECT DISTINCT ?topicName
+    WHERE {'{'}
+    ?keyword <http://www.w3.org/2004/02/skos/core#prefLabel> "{keyword}" .
+    ?topic <https://semopenalex.org/ontology/hasKeyword> ?keyword .
+    ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> ?topicName
+    {'}'}
+  """
+  results = query_endpoint(query)
+  topic_list = []
+  for a in results:
+    topic_list.append(a['topicName'])
+  return topic_list
+
+def combine_graphs(graph1, graph2):
+  dup_nodes = graph1['nodes'] + graph2['nodes']
+  dup_edges = graph1['edges'] + graph2['edges']
+  final_nodes = list({tuple(d.items()): d for d in dup_nodes}.values())
+  final_edges = list({tuple(d.items()): d for d in dup_edges}.values())
+  return {"nodes": final_nodes, "edges": final_edges}
 
 if __name__ =='__main__':
   app.run()
