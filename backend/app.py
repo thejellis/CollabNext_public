@@ -10,7 +10,7 @@ app= Flask(__name__, static_folder='build', static_url_path='/')
 CORS(app)
 with open('institutions.csv', 'r') as fil:
     autofill_inst_list = fil.read().split(',\n')
-with open('topics.csv', 'r') as fil:
+with open('keywords.csv', 'r') as fil:
     autofill_topics_list = fil.read().split('\n')
 
 
@@ -84,6 +84,7 @@ def initial_search():
       final_graph = combine_graphs(final_graph, graph)
       final_metadata.append(data)
     results = {"metadata": final_metadata, "graph": final_graph}
+    print(final_metadata)
   elif institution:
     data, graph = get_institution_metadata(institution)
     results = {"metadata": data, "graph": graph}
@@ -567,9 +568,10 @@ def autofill_institutions():
 def autofill_topics():
   topic = request.json.get('topic')
   possible_searches = []
-  for i in autofill_topics_list:
-    if topic.lower() in i.lower():
-      possible_searches.append(i)
+  if len(topic) > 2:
+    for i in autofill_topics_list:
+      if topic.lower() in i.lower():
+        possible_searches.append(i)
   return {"possible_searches": possible_searches}
 
 def get_topics_from_keyword(keyword):
