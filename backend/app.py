@@ -89,6 +89,7 @@ def initial_search():
     data = get_institution_metadata(institution)
     topic_list, graph = get_topics_oa(data['ror'], data['name'], data['oa_link'])
     results = {"metadata": data, "graph": graph, "list": topic_list}
+    print(topic_list)
   elif researcher:
     data, graph = get_author_metadata(researcher)
     results = {"metadata": data, "graph": graph}
@@ -528,7 +529,6 @@ def is_HBCU(id):
   id = id.replace('https://openalex.org/institutions/', "")
   query = f"""SELECT HBCU FROM institutions_filtered WHERE id = "{id}";"""
   result = execute_read_query(connection, query)
-  print(id)
   if result == [(1,)]:
     return True
   else:
@@ -609,7 +609,6 @@ def get_topics_oa(ror, name, id):
     data = response.json()
     authors = data['results']
     next_page = data['meta']['next_cursor']
-    print("Onto next page...")
   final_keyword_count = {}
   for x in final_topic_count:
     with open('topics_keywords.json', 'r') as file:
