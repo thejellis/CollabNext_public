@@ -86,8 +86,9 @@ def initial_search():
     results = {"metadata": final_metadata, "graph": final_graph}
     print(final_metadata)
   elif institution:
-    data, graph = get_institution_metadata(institution)
-    results = {"metadata": data, "graph": graph}
+    data = get_institution_metadata(institution)
+    topic_list, graph = get_topics_oa(data['ror'], data['name'], data['oa_link'])
+    results = {"metadata": data, "graph": graph, "list": topic_list}
   elif researcher:
     data, graph = get_author_metadata(researcher)
     results = {"metadata": data, "graph": graph}
@@ -305,16 +306,6 @@ def get_institution_metadata(institution):
   ?people <http://www.w3.org/ns/org#memberOf> ?institution .
   {'}'} GROUP BY ?ror ?workscount ?citedcount ?homepage ?institution
   """
-  query2 = f"""
-  SELECT DISTINCT ?topicName ?topic
-  WHERE {'{'}
-  ?institution <http://xmlns.com/foaf/0.1/name> "{institution}" .
-  ?person <http://www.w3.org/ns/org#memberOf> ?institution .
-  ?work <http://purl.org/dc/terms/creator> ?person .
-  << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
-  ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> ?topicName .
-  {'}'}LIMIT 10
-  """
   results = query_endpoint(query)
   ror = results[0]['ror']
   works_count = results[0]['workscount']
@@ -323,20 +314,8 @@ def get_institution_metadata(institution):
   author_count = results[0]['peoplecount']
   oa_link = results[0]['institution']
   oa_link = oa_link.replace('semopenalex', 'openalex').replace('institution', 'institutions')
-
-  nodes = []
-  edges = []
   hbcu = is_HBCU(oa_link)
-  nodes.append({ 'id': oa_link, 'label': institution, 'type': 'INSTITUTION', 'hbcu': hbcu })
-  results2 = query_endpoint(query2)
-  for topic in results2:
-    topic_id = topic['topic']
-    name = topic['topicName']
-    node = { 'id': topic_id, 'label': name, 'type': 'TOPIC' }
-    node_edge = { 'id': f"""{oa_link}-{topic_id}""", 'start': oa_link, 'end': topic_id, "label": "researches", "start_type": "INSTITUTION", "end_type": "TOPIC"}
-    nodes.append(node)
-    edges.append(node_edge)
-  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link, "hbcu": hbcu}, {"nodes": nodes, "edges": edges}
+  return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link, "hbcu": hbcu}
 
 def get_topic_metadata(topic):
    query = f"""
@@ -589,12 +568,80 @@ def get_topics_from_keyword(keyword):
     topic_list.append(a['topicName'])
   return topic_list
 
+def get_keywords_from_topics(topic):
+  query = f"""
+  SELECT DISTINCT ?keywordName
+    WHERE {'{'}
+    ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> "{topic}" .
+    ?topic <https://semopenalex.org/ontology/hasKeyword> ?keyword .
+    ?keyword <http://www.w3.org/2004/02/skos/core#prefLabel> ?keywordName
+    {'}'}
+  """
+  results = query_endpoint(query)
+  keyword_list = []
+  for a in results:
+    keyword_list.append(a['keywordName'])
+  return keyword_list
+
 def combine_graphs(graph1, graph2):
   dup_nodes = graph1['nodes'] + graph2['nodes']
   dup_edges = graph1['edges'] + graph2['edges']
   final_nodes = list({tuple(d.items()): d for d in dup_nodes}.values())
   final_edges = list({tuple(d.items()): d for d in dup_edges}.values())
   return {"nodes": final_nodes, "edges": final_edges}
+
+def get_topics_oa(ror, name, id):
+  final_topic_count = {}
+  headers = {'Accept': 'application/json'}
+  response = requests.get(f'https://api.openalex.org/authors?per-page=200&filter=last_known_institutions.ror:{ror}&cursor=*', headers=headers)
+  data = response.json()
+  authors = data['results']
+  next_page = data['meta']['next_cursor']
+  while next_page is not None:
+    for a in authors:
+      topics = a['topics']
+      for topic in topics:
+        if topic['display_name'] in final_topic_count:
+          final_topic_count[topic['display_name']] = final_topic_count[topic['display_name']] + 1
+        else:
+          final_topic_count[topic['display_name']] = 1
+    response = requests.get(f'https://api.openalex.org/authors?per-page=200&filter=last_known_institutions.ror:{ror}&cursor=' + next_page, headers=headers)
+    data = response.json()
+    authors = data['results']
+    next_page = data['meta']['next_cursor']
+    print("Onto next page...")
+  final_keyword_count = {}
+  for x in final_topic_count:
+    with open('topics_keywords.json', 'r') as file:
+      topic_keywords = json.load(file)
+    if x in topic_keywords:
+      keywords = topic_keywords[x]
+    else:
+      print("Missing: " + str(x))
+      keywords = []
+    for key in keywords:
+      if key in final_keyword_count:
+        final_keyword_count[key] = final_keyword_count[key] + final_topic_count[x]
+      else:
+        final_keyword_count[key] = final_topic_count[x]
+  # Sorting the dictionary by values in descending order
+  sorted_keywords = sorted(final_keyword_count.items(), key=lambda x: x[1], reverse=True)
+  # Printing the sorted keywords and their values
+
+  # Make the graph
+  nodes = []
+  edges = []
+  nodes.append({ 'id': id, 'label': name, 'type': 'INSTITUTION' })
+  for keyword, number in sorted_keywords:
+    nodes.append({'id': keyword, 'label': keyword, 'type': "TOPIC"})
+    number_id = keyword + ":" + str(number)
+    nodes.append({'id': number_id, 'label': number, 'type': "NUMBER"})
+    edges.append({ 'id': f"""{id}-{keyword}""", 'start': id, 'end': keyword, "label": "researches", "start_type": "INSTITUTION", "end_type": "TOPIC"})
+    edges.append({ 'id': f"""{keyword}-{number_id}""", 'start': keyword, 'end': number_id, "label": "number", "start_type": "TOPIC", "end_type": "NUMBER"})
+  graph = {"nodes": nodes, "edges": edges}
+
+  return sorted_keywords, graph
+    
 
 if __name__ =='__main__':
   app.run()
