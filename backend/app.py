@@ -89,7 +89,6 @@ def initial_search():
     data = get_institution_metadata(institution)
     topic_list, graph = get_topics_oa(data['ror'], data['name'], data['oa_link'])
     results = {"metadata": data, "graph": graph, "list": topic_list}
-    print(topic_list)
   elif researcher:
     data, graph = get_author_metadata(researcher)
     results = {"metadata": data, "graph": graph}
