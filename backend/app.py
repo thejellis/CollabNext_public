@@ -76,22 +76,17 @@ def initial_search():
     researcher_data, aGraph = get_author_metadata(researcher)
     results = {"works": {"titles": final_works}, "author_metadata": researcher_data, "topic_metadata": final_topic_data, "graph": final_graph}
   elif topic:
-    keywords = get_topics_from_keyword(topic)
-    final_graph = {"nodes": [], "edges": []}
-    final_metadata = []
-    for t in keywords:
-      data, graph = get_topic_metadata(t)
-      final_graph = combine_graphs(final_graph, graph)
-      final_metadata.append(data)
-    results = {"metadata": final_metadata, "graph": final_graph}
-    print(final_metadata)
+    data = get_keyword_metadata(topic)
+    topic_list, graph = get_topic_info_oa(topic, data['oa_link'])
+    results = {"metadata": data, "graph": graph, "list": topic_list}
   elif institution:
     data = get_institution_metadata(institution)
     topic_list, graph = get_topics_oa(data['ror'], data['name'], data['oa_link'])
     results = {"metadata": data, "graph": graph, "list": topic_list}
   elif researcher:
-    data, graph = get_author_metadata(researcher)
-    results = {"metadata": data, "graph": graph}
+    data = get_author_metadata(researcher)
+    topic_list, graph = get_author_info_oa(data['oa_link'], data['name'], data['current_institution'])
+    results = {"metadata": data, "graph": graph, "list": topic_list}
   return results
 
 def get_authors(institution, topic):
@@ -372,18 +367,6 @@ def get_author_metadata(author):
     ?current_institution <http://xmlns.com/foaf/0.1/name> ?current_institution_name .
     {'}'}
    """
-   query2 = f"""
-    SELECT ?topicName ?topic (GROUP_CONCAT(DISTINCT ?workTitle; SEPARATOR=", ") AS ?workTitles)
-    WHERE {"{"}
-      ?person <http://xmlns.com/foaf/0.1/name> "Didier Contis" .
-      ?work <http://purl.org/dc/terms/creator> ?person .
-      << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
-      ?topic <http://www.w3.org/2004/02/skos/core#prefLabel> ?topicName .
-      ?work <http://purl.org/dc/terms/title> ?workTitle .
-    {"}"}
-    GROUP BY ?topicName ?topic
-    LIMIT 10
-   """
    results = query_endpoint(query)
    cited_by_count = results[0]['cite_count']
    orcid = results[0]['orcid'] if 'orcid' in results[0] else ''
@@ -391,24 +374,8 @@ def get_author_metadata(author):
    current_institution = results[0]['current_institution_name']
    oa_link = results[0]['author']
    oa_link = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
-   current_institution_id = results[0]['current_institution_name'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
 
-   nodes = []
-   edges = []
-   nodes.append({ 'id': oa_link, 'label': author, 'type': 'AUTHOR' })
-   nodes.append({ 'id': current_institution_id, 'label': current_institution, 'type': 'INSTITUTION' })
-   edges.append({ 'id': f"""{oa_link}-{current_institution_id}""" ,'start': oa_link, 'end': current_institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
-   results2 = query_endpoint(query2)
-   for top in results2:
-     name = top['topicName']
-     id = top['topic']
-     paper_titles = top['workTitles']
-     node = {'id': id, 'label': name, 'type': 'TOPIC' }
-     node_edge = { 'id': f"""{oa_link}-{id}""", 'start': oa_link, 'end': id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC", "connecting_works": paper_titles}
-     nodes.append(node)
-     edges.append(node_edge)
-
-   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution, "oa_link": oa_link}, {'nodes': nodes, 'edges': edges}
+   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution, "oa_link": oa_link}
 
 def query_endpoint(query):
   endpoint_url = "https://semopenalex.org/sparql"
@@ -553,6 +520,7 @@ def autofill_topics():
   return {"possible_searches": possible_searches}
 
 def get_topics_from_keyword(keyword):
+  keyword = keyword.title()
   query = f"""
   SELECT DISTINCT ?topicName
     WHERE {'{'}
@@ -640,6 +608,99 @@ def get_topics_oa(ror, name, id):
 
   return sorted_keywords, graph
     
+def get_author_info_oa(id, name, institution):
+  final_topic_count = []
+  headers = {'Accept': 'application/json'}
+  search_id = id.replace('https://openalex.org/authors/', '')
+  response = requests.get(f'https://api.openalex.org/authors/{search_id}', headers=headers)
+  data = response.json()
+  topics = data['topics']
+  with open('topics_keywords.json', 'r') as file:
+    topic_keywords = json.load(file)
+  for t in topics:
+    if t['display_name'] in topic_keywords:
+      keywords = topic_keywords[t['display_name']]
+    else:
+      keywords = []
+    for key in keywords:
+      final_topic_count.append((key, t['count']))
+
+  nodes = []
+  edges = []
+  nodes.append({ 'id': institution, 'label': institution, 'type': 'INSTITUTION' })
+  edges.append({ 'id': f"""{id}-{institution}""", 'start': id, 'end': institution, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
+  nodes.append({ 'id': id, 'label': name, "type": "AUTHOR"})
+  for keyword, number in final_topic_count:
+    nodes.append({'id': keyword, 'label': keyword, 'type': "TOPIC"})
+    number_id = keyword + ":" + str(number)
+    nodes.append({'id': number_id, 'label': number, 'type': "NUMBER"})
+    edges.append({ 'id': f"""{id}-{keyword}""", 'start': id, 'end': keyword, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC"})
+    edges.append({ 'id': f"""{keyword}-{number_id}""", 'start': keyword, 'end': number_id, "label": "number", "start_type": "TOPIC", "end_type": "NUMBER"})
+  graph = {"nodes": nodes, "edges": edges}
+
+  return final_topic_count, graph
+
+def get_topic_info_oa(keyword, id):
+  headers = {'Accept': 'application/json'}
+  associated_topics = get_topics_from_keyword(keyword)
+  topic_list = []
+
+  for institution in autofill_inst_list:
+    response = requests.get(f'https://api.openalex.org/institutions?select=display_name,topics&filter=display_name.search:{institution}', headers=headers)
+    data = response.json()
+    try:
+      data = data['results'][0]
+      inst_topics = data['topics']
+      count = 0
+      for t in inst_topics:
+        if t['display_name'] in associated_topics:
+          count = count + t['count']
+      topic_list.append((institution, count))
+    except:
+      continue
+
+  topic_list.sort(key=lambda x: x[1], reverse=True)
+
+  nodes = []
+  edges = []
+  nodes.append({ 'id': id, 'label': keyword, 'type': 'TOPIC' })
+  for i, c in topic_list:
+    if not c == 0:
+      nodes.append({ 'id': i, 'label': i, 'type': 'INSTITUTION' })
+      nodes.append({'id': c, 'label': c, 'type': "NUMBER"})
+      edges.append({ 'id': f"""{id}-{i}""", 'start': id, 'end': i, "label": "researches", "start_type": "TOPIC", "end_type": "INSTITUTION"})
+      edges.append({ 'id': f"""{i}-{c}""", 'start': i, 'end': c, "label": "numResearchers", "start_type": "INSTITUTION", "end_type": "NUMBER"})
+  graph = {"nodes": nodes, "edges": edges}
+  return topic_list, graph
+      
+
+
+
+def get_keyword_metadata(keyword):
+  associated_topics = get_topics_from_keyword(keyword)
+  headers = {'Accept': 'application/json'}
+  # This should work in the future, but for now the keyword metadata is not complete in OA
+  response = requests.get(f'https://api.openalex.org/keywords/{keyword.replace(" ", "-")}', headers=headers)
+  data = response.json()
+  oa_link = data['id']
+  cited_by_count = 0
+  work_count = 0
+  researchers = 0
+
+  for topic in associated_topics:
+    response = requests.get(f'https://api.openalex.org/topics?filter=display_name.search:{topic}', headers=headers)
+    data = response.json()
+    data = data['results'][0]
+    cited_by_count = cited_by_count + data['cited_by_count']
+    work_count = work_count + data['works_count']
+    #Author information not yet complete
+    id = data['id']
+    response = requests.get(f'https://api.openalex.org/authors?filter=topics.id:{id.replace("https://openalex.org/", "")}', headers=headers)
+    data = response.json()
+    data = data['meta']['count']
+    researchers += data
+  return {"name": keyword.title(), "topic_clusters": associated_topics, "cited_by_count": cited_by_count, "work_count": work_count, "researchers": researchers, "oa_link": oa_link}
+
 
 if __name__ =='__main__':
   app.run()
