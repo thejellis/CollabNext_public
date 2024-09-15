@@ -39,7 +39,7 @@ def initial_search():
         final_works = list(set(final_works + works['titles']))
         final_topic_data.append(topic_data)
     institution_data, aGraph = get_institution_metadata(institution)
-    researcher_data, aGraph = get_author_metadata(researcher)   
+    researcher_data, aGraph = get_author_metadata(researcher)
     results = {"works": {"titles": final_works}, "institution_metadata": institution_data, "author_metadata": researcher_data, "topic_metadata": final_topic_data, "graph": final_graph}
   elif institution and researcher:
     institution_data, aGraph = get_institution_metadata(institution)
@@ -609,7 +609,7 @@ def get_topics_oa(ror, name, id):
   graph = {"nodes": nodes, "edges": edges}
 
   return sorted_keywords, graph
-    
+
 def get_author_info_oa(id, name, institution):
   final_topic_count = {}
   headers = {'Accept': 'application/json'}
@@ -653,8 +653,8 @@ def get_topic_info_oa(keyword, id):
 
   for institution in autofill_inst_list:
     response = requests.get(f'https://api.openalex.org/institutions?select=display_name,topics&filter=display_name.search:{institution}', headers=headers)
-    data = response.json()
     try:
+      data = response.json()
       data = data['results'][0]
       inst_topics = data['topics']
       count = 0
@@ -679,7 +679,7 @@ def get_topic_info_oa(keyword, id):
       edges.append({ 'id': f"""{i}-{c}""", 'start': i, 'end': c, "label": "numResearchers", "start_type": "INSTITUTION", "end_type": "NUMBER"})
   graph = {"nodes": nodes, "edges": edges}
   return topic_list, graph
-      
+
 
 
 
