@@ -87,6 +87,7 @@ def initial_search():
     data = get_author_metadata(researcher)
     topic_list, graph = get_author_info_oa(data['oa_link'], data['name'], data['current_institution'])
     results = {"metadata": data, "graph": graph, "list": topic_list}
+  print(results['list'])
   return results
 
 def get_authors(institution, topic):
@@ -374,8 +375,9 @@ def get_author_metadata(author):
    current_institution = results[0]['current_institution_name']
    oa_link = results[0]['author']
    oa_link = oa_link.replace('semopenalex', 'openalex').replace('author', 'authors')
+   institution_link = results[0]['current_institution'].replace('semopenalex', 'openalex').replace('institution', 'institutions')
 
-   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution, "oa_link": oa_link}
+   return {"name": author, "cited_by_count": cited_by_count, "orcid": orcid, "work_count": work_count, "current_institution": current_institution, "oa_link": oa_link, "institution_url": institution_link}
 
 def query_endpoint(query):
   endpoint_url = "https://semopenalex.org/sparql"
