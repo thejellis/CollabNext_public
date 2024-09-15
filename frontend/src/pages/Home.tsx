@@ -177,7 +177,7 @@ const Home = () => {
                               {...field}
                               // placeholder='Select option'
                             >
-                              <option value='Education'>Education</option>
+                              <option value='Education'>HBCU</option>
                             </Select>
                           )}
                           <FormErrorMessage>
