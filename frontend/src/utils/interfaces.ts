@@ -1,15 +1,18 @@
 export interface ResearchDataInterface {
   cited_count: string;
   works_count: string;
-  works: string[];
   institution_name: string;
-  researcher_name: string;
-  ror: string;
+  ror_link: string;
   author_count: string;
-  url: string;
-  worksAreTopics: boolean;
-  worksAreAuthors: boolean;
-  link: string;
+  institution_url: string;
+  open_alex_link: string;
   graph?: {nodes: any[]; edges: any[]};
-  hbcu?: boolean;
+  is_hbcu: boolean;
+  topics: string[][];
+  organizations: string[][];
+  topic_name: string;
+  topic_clusters: string[];
+  researcher_name: string;
+  orcid_link: string;
+  search?: 'topic' | 'researcher' | 'institution';
 }

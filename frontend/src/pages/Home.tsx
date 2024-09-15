@@ -1,21 +1,21 @@
-import { Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {Field, Form, Formik} from 'formik';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import * as Yup from 'yup';
 
 import {
-	Box,
-	Button,
-	Flex,
-	FormControl,
-	FormErrorMessage,
-	Input,
-	Select,
-	SimpleGrid,
-	Text,
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormErrorMessage,
+  Input,
+  Select,
+  SimpleGrid,
+  Text,
 } from '@chakra-ui/react';
 
-import { baseUrl } from '../utils/constants';
+import {baseUrl} from '../utils/constants';
 
 const validateSchema = Yup.object().shape({
   institution: Yup.string().notRequired(),
@@ -203,7 +203,7 @@ const Home = () => {
                 spacing={{base: 7, lg: '90px'}}
               >
                 {[
-                  {text: 'Topic(s)', key: 'topic'},
+                  {text: 'Topic Keyword', key: 'topic'},
                   {text: 'Researcher Name', key: 'researcher'},
                 ].map(({text, key}) => (
                   <Box key={text}>

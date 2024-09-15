@@ -75,20 +75,14 @@ h2 {
   line-height: 125%;
 }
 
-.list-map {
-  display: flex;
-  flex-direction: row;
-  margin-top: 0.6rem;
-}
-
 .list-map > div > a,
 .list-map > div > p {
   margin-top: 0.3rem;
-  display: block;
 }
 
 .list-map > div > a {
   text-decoration: underline;
+  display: block;
 }
 
 .ror {
@@ -124,10 +118,6 @@ h2 {
   .dep-content {
     margin-left: 0px;
     margin-top: 15px;
-  }
-
-  .list-map {
-    flex-direction: column;
   }
 
   h2 {
