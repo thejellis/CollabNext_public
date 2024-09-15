@@ -611,7 +611,7 @@ def get_topics_oa(ror, name, id):
   return sorted_keywords, graph
     
 def get_author_info_oa(id, name, institution):
-  final_topic_count = []
+  final_topic_count = {}
   headers = {'Accept': 'application/json'}
   search_id = id.replace('https://openalex.org/authors/', '')
   response = requests.get(f'https://api.openalex.org/authors/{search_id}', headers=headers)
@@ -625,14 +625,18 @@ def get_author_info_oa(id, name, institution):
     else:
       keywords = []
     for key in keywords:
-      final_topic_count.append((key, t['count']))
+      if key in final_topic_count:
+        final_topic_count[key] = final_topic_count[key] + t['count']
+      else:
+        final_topic_count[key] = t['count']
+  sorted_keywords = sorted(final_topic_count.items(), key=lambda x: x[1], reverse=True)
 
   nodes = []
   edges = []
   nodes.append({ 'id': institution, 'label': institution, 'type': 'INSTITUTION' })
   edges.append({ 'id': f"""{id}-{institution}""", 'start': id, 'end': institution, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
   nodes.append({ 'id': id, 'label': name, "type": "AUTHOR"})
-  for keyword, number in final_topic_count:
+  for keyword, number in sorted_keywords:
     nodes.append({'id': keyword, 'label': keyword, 'type': "TOPIC"})
     number_id = keyword + ":" + str(number)
     nodes.append({'id': number_id, 'label': number, 'type': "NUMBER"})
@@ -640,7 +644,7 @@ def get_author_info_oa(id, name, institution):
     edges.append({ 'id': f"""{keyword}-{number_id}""", 'start': keyword, 'end': number_id, "label": "number", "start_type": "TOPIC", "end_type": "NUMBER"})
   graph = {"nodes": nodes, "edges": edges}
 
-  return final_topic_count, graph
+  return sorted_keywords, graph
 
 def get_topic_info_oa(keyword, id):
   headers = {'Accept': 'application/json'}
