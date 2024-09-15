@@ -59,10 +59,7 @@
       "github": "",
       "website": "https://kexinrong.github.io/",
       "image": "/assets/pictures/team_members/kexin_rong.webp"
-    }
-  ],
-
-  "advisory": [
+    },
     {
       "firstName": "Sufyan",
       "lastName": "Baksh",
@@ -74,18 +71,6 @@
       "github": "",
       "website": "",
       "image": "/assets/pictures/team_members/sufyan_baksh.webp"
-    },
-    {
-      "firstName": "Pamela",
-      "lastName": "Clark",
-      "email": "pamela.a.clarke@Howard.edu",
-      "institutionalAffiliation": "Howard University",
-      "role": "Advisor",
-      "biosketch": "Ms. Pamela A.G. Clarke is the Director of the Research Development Unit within the Office of Research at Howard University. In her role as Director, she leads the Research Development Unit  and has direct working relationships with faculty in their pursuit of extramural research funding for all grant and contract proposals, with a specific focus on  large interdisciplinary proposals, center proposals, and research and training proposals. Ms. Clarke has the responsibility  for the design, implementation, and stewardship of research development models supporting Howard University. Ms. Clarke collaborates with constituents across and external to the university to raise the university\u2019s research profile, advance research success and build new research collaborations in line with other divisional efforts that maintain and support a growing Carnegie Research One (R1) university. As the Strategy and Operations Lead  for  research development she develops and manages programs to improve engagement of faculty in research; provide strategic advice to develop competitive proposals; develops research development metrics and goals: assist with the writing and review of proposals for large, complex awards;  assist researchers in identifying a diverse portfolio of funding sources; design and manage programs to support research development and develop strategic partnerships with foundations, national laboratories and granting agencies to bring program directors and grant officers to meet with researchers on campus. Ms. Clarke also manages all  faculty research incentive programs and competitions. Ms. Clarke, through her research has investigated the molecular mechanisms of endocrine resistance in breast cancer to gain a better understanding of how breast cancer cells acquire resistance to systemic endocrine and cytotoxic therapies and the effects of hormones and growth factors on breast cancer cell proliferation survival and death.",
-      "linkedin": "https://www.linkedin.com/in/pamela-a-g-clarke-4684807/",
-      "github": "",
-      "website": "",
-      "image": "/assets/pictures/team_members/pamela_clark.webp"
     },
     {
       "firstName": "Leslie",
@@ -100,16 +85,103 @@
       "image": "/assets/pictures/team_members/leslie_collins.webp"
     },
     {
-      "firstName": "Majed",
-      "lastName": "El-dweik",
-      "email": "majed.dweik@aamu.edu",
-      "institutionalAffiliation": "Alabama A&M University",
+      "firstName": "Kinnis",
+      "lastName": "Gosha",
+      "email": "",
+      "institutionalAffiliation": "Morehouse College",
       "role": "Advisor",
-      "biosketch": "",
-      "linkedin": "https://www.linkedin.com/in/professor-majed-dweik-phd-62362417/",
+      "biosketch": "Dr. Gosha\u2019s research interests include conversational AI, social media data analytics, computer science education, broadening participation in computing, and culturally relevant computing. Gosha also leads Morehouse\u2019s Software Engineering degree program, where he builds collaborations with industry partners to provide his students with a variety of experiential learning experiences. In October of 2022, Gosha took over as the Principal Investigator of the Institute for African-American Mentoring in Computing Sciences (IAAMCS), a Broadening Participation in Computing Alliance, funded by the National Science Foundation. \n\nTo date, 21 undergraduate researchers in his lab have gone on to pursue a doctoral degree in computing. PI Gosha currently has over 60 peer-reviewed publications in the area of Broadening Participation in Computing (BPC). Since arriving at Morehouse (2011), he has included undergraduate student researchers as co-authors in 26 peer-reviewed manuscripts. Gosha is very active in the BPC community serving as a regular paper and poster reviewer for the Tapia, SIGCSE, and RESPECT conferences. Currently, Gosha is the Co-Chair of the IEEE Special Technical Community for Broadening Participation and the founder and Co-Chair of the Black Issues in Computing Education (BICE) Symposium. Additionally, he is a newly elected board member of both the Computing Research Association and the National Science Foundation Computer and Information Science and Engineering (CISE) Advisory Committee.",
+      "linkedin": "https://www.linkedin.com/in/kinnisgosha/",
       "github": "",
       "website": "",
-      "image": "/assets/pictures/team_members/majed_el-dweik.webp"
+      "image": "/assets/pictures/team_members/kinnis_gosha.webp"
+    },
+    {
+      "firstName": "Firdous",
+      "lastName": "Kausar",
+      "email": "",
+      "institutionalAffiliation": "Fisk University",
+      "role": "Advisor",
+      "biosketch": "Dr. Firdous Kausar is an associate professor in the Department of Mathematics and Computer Science. Prior to Fisk, she worked as an associate professor and assistant professor in the Electrical and Computer Engineering Department, Sultan Qaboos University, Oman, from 2017 to 2023. She also worked as an assistant professor in Computer Science Department at Imam Muhammad Ibn Saud Islamic University, Riyadh, Saudi Arabia, from 2010 t0 2017.\nHer research interests include network security, access control, authentication and key management, cybersecurity data science, IoT security, blockchain, digital forensics, biometric cryptosystems, and machine learning. She has co-organized several international workshops and conferences, served on many technical program committees, and reviewed papers for several journals, conferences, and workshops. She is a senior member of IEEE.",
+      "linkedin": "https://www.linkedin.com/in/firdous-kausar-a3669110/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/firdous_kausar.webp"
+    },
+    {
+      "firstName": "Christopher",
+      "lastName": "Thomas",
+      "email": "christopher.thomas3@morehouse.edu",
+      "institutionalAffiliation": "Morehouse College",
+      "role": "Advisor",
+      "biosketch": "",
+      "linkedin": "https://www.linkedin.com/in/chris-thomas-22aa7028/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/christopher_thomas.webp"
+    }
+  ],
+
+  "advisory": [
+    {
+      "firstName": "Pamela",
+      "lastName": "Clark",
+      "email": "pamela.a.clarke@Howard.edu",
+      "institutionalAffiliation": "Howard University",
+      "role": "Advisor",
+      "biosketch": "Ms. Pamela A.G. Clarke is the Director of the Research Development Unit within the Office of Research at Howard University. In her role as Director, she leads the Research Development Unit  and has direct working relationships with faculty in their pursuit of extramural research funding for all grant and contract proposals, with a specific focus on  large interdisciplinary proposals, center proposals, and research and training proposals. Ms. Clarke has the responsibility  for the design, implementation, and stewardship of research development models supporting Howard University. Ms. Clarke collaborates with constituents across and external to the university to raise the university\u2019s research profile, advance research success and build new research collaborations in line with other divisional efforts that maintain and support a growing Carnegie Research One (R1) university. As the Strategy and Operations Lead  for  research development she develops and manages programs to improve engagement of faculty in research; provide strategic advice to develop competitive proposals; develops research development metrics and goals: assist with the writing and review of proposals for large, complex awards;  assist researchers in identifying a diverse portfolio of funding sources; design and manage programs to support research development and develop strategic partnerships with foundations, national laboratories and granting agencies to bring program directors and grant officers to meet with researchers on campus. Ms. Clarke also manages all  faculty research incentive programs and competitions. Ms. Clarke, through her research has investigated the molecular mechanisms of endocrine resistance in breast cancer to gain a better understanding of how breast cancer cells acquire resistance to systemic endocrine and cytotoxic therapies and the effects of hormones and growth factors on breast cancer cell proliferation survival and death.",
+      "linkedin": "https://www.linkedin.com/in/pamela-a-g-clarke-4684807/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/pamela_clark.webp"
+    },
+    {
+      "firstName": "Lila",
+      "lastName": "Ghemri",
+      "email": "lila.ghemri@tsu.edu",
+      "institutionalAffiliation": "Texas Southern University",
+      "role": "Co-PI",
+      "biosketch": "Lila Ghemri joined Texas Southern University in 2002, after ten years in industry developing AI systems (Knowledge bases and Information extraction). She has been teaching undergraduate and graduate courses in various computer science topics as well as advising graduate and undergraduate students in research. She holds a BSc in Computer Engineering from the University of Science and Technology in Algiers, Algeria, and a PhD in Computer Science from the University of Bristol in the UK.  Ghemri research interests are in machine learning, data analytics and privacy preserving techniques.",
+      "linkedin": "https://www.linkedin.com/in/lila-ghemri-66859a17/",
+      "github": "https://github.com/GhemriLila",
+      "website": "",
+      "image": "/assets/pictures/team_members/lila_ghemri.webp"
+    },
+    {
+      "firstName": "Kexin",
+      "lastName": "Rong",
+      "email": "krong@gatech.edu",
+      "institutionalAffiliation": "Georgia Institute of Technology",
+      "role": "Co-PI",
+      "biosketch": "Kexin Rong is an Assistant Professor in the School of Computer Science at the Georgia Institute of Technology. Her research lies at the intersection of data management and machine learning, focusing on developing systems and algorithms to streamline large-scale data analytics. She has received an Amazon Research Award, distinguished reviewer awards at SIGMOD and PVLDB, an honorable mention for the SIGMOD Jim Gray Doctoral Dissertation Award, EECS Rising Stars by UC Berkeley. She received a Ph.D. in Computer Science from Stanford University in 2021, and a B.S. in Computer Science from California Institute of Technology.",
+      "linkedin": "",
+      "github": "",
+      "website": "https://kexinrong.github.io/",
+      "image": "/assets/pictures/team_members/kexin_rong.webp"
+    },
+    {
+      "firstName": "Sufyan",
+      "lastName": "Baksh",
+      "email": "sbaksh@fisk.edu",
+      "institutionalAffiliation": "Fisk University",
+      "role": "Advisor",
+      "biosketch": "Dr. Sufyan Baksh is the Executive Director of Innovation and Distinguished Professor of Business in the Department of Business Administration at Fisk University. He was a professor at the University of Scranton, where he worked from fall 2008 until 2022. He was also the program director for three programs (social media strategies, business communication, and CAS-accelerated MBA programs) at The University of Scranton.  He received a Ph.D. in integrated marketing communication & advanced research methods from Texas Tech University. He has completed the post-doctoral bridge program in marketing and management from the Warrington College of Business at the University of Florida. He has an MBA in entrepreneurship and international business from RIT and an MBA/MMS in marketing from RIMSR, and a BA in Economics & Commerce from Jai Hind College (Mumbai, India). He is a board member of Wahed Invest Inc. and has worked for LINOpinion PR (Mumbai, India) for four years, in addition to spending more than 10 years in international Marketing and Finance. His research in marketing, communication, digital transformation, and business is published in several internationally renowned peer-reviewed journals, and he has presented at leading national and international conferences.",
+      "linkedin": "https://www.linkedin.com/in/sufyan-mohammed/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/sufyan_baksh.webp"
+    },
+    {
+      "firstName": "Leslie",
+      "lastName": "Collins",
+      "email": "lecollins@fisk.edu",
+      "institutionalAffiliation": "Fisk University",
+      "role": "Advisor",
+      "biosketch": "",
+      "linkedin": "https://www.linkedin.com/in/leslie-collins-6791471b4/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/leslie_collins.webp"
     },
     {
       "firstName": "Kinnis",
@@ -122,6 +194,42 @@
       "github": "",
       "website": "",
       "image": "/assets/pictures/team_members/kinnis_gosha.webp"
+    },
+    {
+      "firstName": "Firdous",
+      "lastName": "Kausar",
+      "email": "",
+      "institutionalAffiliation": "Fisk University",
+      "role": "Advisor",
+      "biosketch": "Dr. Firdous Kausar is an associate professor in the Department of Mathematics and Computer Science. Prior to Fisk, she worked as an associate professor and assistant professor in the Electrical and Computer Engineering Department, Sultan Qaboos University, Oman, from 2017 to 2023. She also worked as an assistant professor in Computer Science Department at Imam Muhammad Ibn Saud Islamic University, Riyadh, Saudi Arabia, from 2010 t0 2017.\nHer research interests include network security, access control, authentication and key management, cybersecurity data science, IoT security, blockchain, digital forensics, biometric cryptosystems, and machine learning. She has co-organized several international workshops and conferences, served on many technical program committees, and reviewed papers for several journals, conferences, and workshops. She is a senior member of IEEE.",
+      "linkedin": "https://www.linkedin.com/in/firdous-kausar-a3669110/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/firdous_kausar.webp"
+    },
+    {
+      "firstName": "Christopher",
+      "lastName": "Thomas",
+      "email": "christopher.thomas3@morehouse.edu",
+      "institutionalAffiliation": "Morehouse College",
+      "role": "Advisor",
+      "biosketch": "",
+      "linkedin": "https://www.linkedin.com/in/chris-thomas-22aa7028/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/christopher_thomas.webp"
+    },
+    {
+      "firstName": "Majed",
+      "lastName": "El-dweik",
+      "email": "majed.dweik@aamu.edu",
+      "institutionalAffiliation": "Alabama A&M University",
+      "role": "Advisor",
+      "biosketch": "",
+      "linkedin": "https://www.linkedin.com/in/professor-majed-dweik-phd-62362417/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/majed_el-dweik.webp"
     },
     {
       "firstName": "Antwain",
@@ -146,18 +254,6 @@
       "github": "",
       "website": "",
       "image": "/assets/pictures/team_members/sajid_hussain.webp"
-    },
-    {
-      "firstName": "Firdous",
-      "lastName": "Kausar",
-      "email": "",
-      "institutionalAffiliation": "Fisk University",
-      "role": "Advisor",
-      "biosketch": "Dr. Firdous Kausar is an associate professor in the Department of Mathematics and Computer Science. Prior to Fisk, she worked as an associate professor and assistant professor in the Electrical and Computer Engineering Department, Sultan Qaboos University, Oman, from 2017 to 2023. She also worked as an assistant professor in Computer Science Department at Imam Muhammad Ibn Saud Islamic University, Riyadh, Saudi Arabia, from 2010 t0 2017.\nHer research interests include network security, access control, authentication and key management, cybersecurity data science, IoT security, blockchain, digital forensics, biometric cryptosystems, and machine learning. She has co-organized several international workshops and conferences, served on many technical program committees, and reviewed papers for several journals, conferences, and workshops. She is a senior member of IEEE.",
-      "linkedin": "https://www.linkedin.com/in/firdous-kausar-a3669110/",
-      "github": "",
-      "website": "",
-      "image": "/assets/pictures/team_members/firdous_kausar.webp"
     },
     {
       "firstName": "Aaron",
@@ -230,18 +326,6 @@
       "github": "",
       "website": "",
       "image": "/assets/pictures/team_members/taiesha_smith.webp"
-    },
-    {
-      "firstName": "Christopher",
-      "lastName": "Thomas",
-      "email": "christopher.thomas3@morehouse.edu",
-      "institutionalAffiliation": "Morehouse College",
-      "role": "Advisor",
-      "biosketch": "",
-      "linkedin": "https://www.linkedin.com/in/chris-thomas-22aa7028/",
-      "github": "",
-      "website": "",
-      "image": "/assets/pictures/team_members/christopher_thomas.webp"
     },
     {
       "firstName": "Talitha",

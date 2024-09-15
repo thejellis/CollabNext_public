@@ -1,19 +1,20 @@
 import '../styles/Search.css';
 
-import React, { useEffect, useState } from 'react';
-import { Circles } from 'react-loader-spinner';
-import { useSearchParams } from 'react-router-dom';
+import {useEffect, useState} from 'react';
+import {Circles} from 'react-loader-spinner';
+import {useSearchParams} from 'react-router-dom';
 
-import { Box, Button, Text } from '@chakra-ui/react';
+import {Box, Button} from '@chakra-ui/react';
 
 // import CytoscapeComponent from 'react-cytoscapejs';
 import GraphComponent from '../components/GraphComponent';
-// import NetworkMap from '../assets/NetworkMap.png';
-import { baseUrl, initialValue } from '../utils/constants';
-import { ResearchDataInterface } from '../utils/interfaces';
+import InstitutionMetadata from '../components/InstitutionMetadata';
+import ResearcherMetadata from '../components/ResearcherMetadata';
+import TopicMetadata from '../components/TopicMetadata';
+import {baseUrl, initialValue} from '../utils/constants';
+import {ResearchDataInterface} from '../utils/interfaces';
 
 const Search = () => {
-  // console.log(baseUrl);
   let [searchParams] = useSearchParams();
   // const cyRef = React.useRef<cytoscape.Core | undefined>();
   const institution = searchParams.get('institution');
@@ -22,7 +23,7 @@ const Search = () => {
   const researcher = searchParams.get('researcher');
   const [isNetworkMap, setIsNetworkMap] = useState(false);
   const [universityName, setUniversityName] = useState(institution || '');
-  let [topicType, setTopicType] = useState(topic || '');
+  const [topicType, setTopicType] = useState(topic || '');
   const [institutionType, setInstitutionType] = useState(type || 'Education');
   const [researcherType, setResearcherType] = useState(researcher || '');
   const [data, setData] = useState<ResearchDataInterface>(initialValue);
@@ -38,21 +39,20 @@ const Search = () => {
     handleSearch();
   }, []);
 
-  const handleSearch = (topic?: string) => {
-    // if (topicType && !researcherType) {
-    //   setData(initialValue);
-    //   return;
-    // }
+  const handleSearch = () => {
     if (researcherType || universityName || topicType) {
       setIsLoading(true);
-      if (topic) {
-        topicType = topic;
-      }
       if (
         (!topicType && !researcherType) ||
         (!researcherType && !universityName) ||
         (!topicType && !universityName)
       ) {
+        const search = topicType
+          ? 'topic'
+          : universityName
+          ? 'institution'
+          : 'researcher';
+        const topicName = topicType;
         fetch(`${baseUrl}/initial-search`, {
           method: 'POST',
           headers: {
@@ -68,25 +68,47 @@ const Search = () => {
           .then((res) => res.json())
           .then((data) => {
             console.log(data);
-            setData({
-              cited_count:
-                data?.metadata?.cited_count || data?.metadata?.cited_by_count,
-              works_count:
-                data?.metadata?.works_count || data?.metadata?.work_count,
-              works: [],
-              institution_name: researcherType
-                ? data?.metadata?.current_institution
-                : data?.metadata?.name,
-              researcher_name: researcherType ? data?.metadata?.name : '',
-              ror: data?.metadata?.ror,
-              author_count: data?.metadata?.author_count,
-              url: data?.metadata?.homepage || data?.metadata?.orcid,
-              worksAreAuthors: false,
-              worksAreTopics: false,
-              link: data?.metadata?.oa_link,
-              graph: data?.graph,
-              hbcu: data?.metadata?.hbcu,
-            });
+            search === 'institution'
+              ? setData({
+                  ...initialValue,
+                  institution_name: data?.metadata?.name,
+                  is_hbcu: data?.metadata?.hbcu,
+                  cited_count: data?.metadata?.cited_count,
+                  author_count: data?.metadata?.author_count,
+                  works_count: data?.metadata?.works_count,
+                  institution_url: data?.metadata?.homepage,
+                  open_alex_link: data?.metadata?.oa_link,
+                  ror_link: data?.metadata?.ror,
+                  graph: data?.graph,
+                  topics: data?.list,
+                  search,
+                })
+              : search === 'topic'
+              ? setData({
+                  ...initialValue,
+                  topic_name: topicName,
+                  topic_clusters: data?.metadata?.topic_clusters,
+                  graph: data?.graph,
+                  cited_count: data?.metadata?.cited_by_count,
+                  author_count: data?.metadata?.researchers,
+                  works_count: data?.metadata?.work_count,
+                  open_alex_link: data?.metadata?.oa_link,
+                  organizations: data?.list,
+                  search,
+                })
+              : setData({
+                  ...initialValue,
+                  institution_name: data?.metadata?.current_institution,
+                  researcher_name: data?.metadata?.name,
+                  orcid_link: data?.metadata?.orcid,
+                  cited_count: data?.metadata?.cited_by_count,
+                  works_count: data?.metadata?.work_count,
+                  graph: data?.graph,
+                  open_alex_link: data?.metadata?.oa_link,
+                  topics: data?.list,
+                  institution_url: data?.metadata?.institution_url,
+                  search,
+                });
             setIsLoading(false);
           })
           .catch((error) => {
@@ -94,63 +116,32 @@ const Search = () => {
             setData(initialValue);
             console.log(error);
           });
-        return;
+      } else {
+        // fetch(`${baseUrl}/initial-search`, {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify({
+        //     organization: universityName,
+        //     type: institutionType,
+        //     topic: topicType,
+        //     researcher: researcherType,
+        //   }),
+        // })
+        //   .then((res) => res.json())
+        //   .then((data) => {
+        //     console.log(data);
+        //     setData({
+        //     });
+        //     setIsLoading(false);
+        //   })
+        //   .catch((error) => {
+        //     setIsLoading(false);
+        //     setData(initialValue);
+        //     console.log(error);
+        //   });
       }
-      fetch(`${baseUrl}/initial-search`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // organization: 'Georgia Institute of Technology',
-          // researcher: 'Didier Contis',
-          // type: '',
-          // topic: 'Network Intrusion Detection and Defense Mechanisms',
-          organization: universityName,
-          type: institutionType,
-          topic: topicType,
-          researcher: researcherType,
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-          setData({
-            cited_count:
-              data?.author_metadata?.cited_by_count ||
-              data?.institution_metadata?.cited_count,
-            works_count:
-              data?.author_metadata?.work_count ||
-              data?.institution_metadata?.works_count,
-            works:
-              (!topicType
-                ? data?.topics?.names
-                : !researcherType
-                ? data?.authors?.names
-                : data?.works?.titles) || [],
-            worksAreTopics: !topicType ? true : false,
-            worksAreAuthors: !researcherType ? true : false,
-            institution_name: !universityName
-              ? data?.author_metadata?.current_institution
-              : data?.institution_metadata?.name,
-            researcher_name: data?.author_metadata?.name || '',
-            ror: data?.institution_metadata?.ror,
-            author_count: '',
-            url:
-              data?.author_metadata?.orcid ||
-              data?.institution_metadata?.homepage,
-            link:
-              data?.author_metadata?.oa_link ||
-              data?.institution_metadata?.oa_link,
-            graph: data?.graph,
-          });
-          setIsLoading(false);
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          setData(initialValue);
-          console.log(error);
-        });
     } else {
       setIsLoading(true);
       fetch(`${baseUrl}/get-default-graph`, {
@@ -175,14 +166,6 @@ const Search = () => {
           setData(initialValue);
           console.log(error);
         });
-      // toast({
-      //   title: 'Error',
-      //   description: 'All 3 fields cannot be empty',
-      //   status: 'error',
-      //   duration: 8000,
-      //   isClosable: true,
-      //   position: 'top-right',
-      // });
     }
   };
 
@@ -271,74 +254,13 @@ const Search = () => {
           </div>
         ) : (
           <div>
-            <button className='topButton'>List Map</button>
-            <h2>
-              {data?.institution_name}
-              {data?.hbcu ? ' - HBCU' : ''}
-            </h2>
-            <h2 style={{marginTop: '.4rem'}}>{data?.researcher_name}</h2>
-            <div className='list-map'>
-              <div>
-                {data?.ror && (
-                  <a
-                    target='_blank'
-                    rel='noreferrer'
-                    className='ror'
-                    href={data?.ror}
-                  >
-                    RORID -{' '}
-                    {data?.ror?.split('/')[data?.ror?.split('/')?.length - 1]}
-                  </a>
-                )}
-                {data?.url && (
-                  <a
-                    target='_blank'
-                    rel='noreferrer'
-                    className='ror'
-                    href={data?.url}
-                  >
-                    {data?.url}
-                  </a>
-                )}
-                {data?.author_count && (
-                  <p>Total {data?.author_count} authors</p>
-                )}
-                <p>Total {data?.works_count} works</p>
-                <p>Total {data?.cited_count} citations</p>
-                <a target='_blank' rel='noreferrer' href={data?.link}>
-                  View on OpenAlex
-                </a>
-              </div>
-              <div className='dep-content'>
-                {data?.works?.map((eachWork) => (
-                  <Text
-                    onClick={() => {
-                      if (data?.worksAreTopics) {
-                        setTopicType(eachWork);
-                        handleSearch(eachWork);
-                      }
-                      if (data?.worksAreAuthors) {
-                        setResearcherType(eachWork[0]);
-                        handleSearch(eachWork[0]);
-                      }
-                    }}
-                    cursor={
-                      data?.worksAreTopics || data?.worksAreAuthors
-                        ? 'pointer'
-                        : 'default'
-                    }
-                    key={eachWork}
-                    textDecoration={
-                      data?.worksAreTopics || data?.worksAreAuthors
-                        ? 'underline'
-                        : 'none'
-                    }
-                  >
-                    {data.worksAreAuthors ? eachWork[0] : eachWork}
-                  </Text>
-                ))}
-              </div>
-            </div>
+            {data?.search === 'institution' ? (
+              <InstitutionMetadata data={data} />
+            ) : data?.search === 'topic' ? (
+              <TopicMetadata data={data} />
+            ) : (
+              <ResearcherMetadata data={data} />
+            )}
           </div>
         )}
       </div>
