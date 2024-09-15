@@ -655,7 +655,8 @@ def get_topic_info_oa(keyword, id):
       for t in inst_topics:
         if t['display_name'] in associated_topics:
           count = count + t['count']
-      topic_list.append((institution, count))
+      if count > 0:
+        topic_list.append((institution, count))
     except:
       continue
 
