@@ -42,10 +42,9 @@ def initial_search():
     researcher_data, aGraph = get_author_metadata(researcher)   
     results = {"works": {"titles": final_works}, "institution_metadata": institution_data, "author_metadata": researcher_data, "topic_metadata": final_topic_data, "graph": final_graph}
   elif institution and researcher:
-    institution_data, aGraph = get_institution_metadata(institution)
-    researcher_data, aGraph = get_author_metadata(researcher)
-    topics, graph = get_topics(researcher, institution)
-    results = {"topics": topics, "institution_metadata": institution_data, "author_metadata": researcher_data, "graph": graph}
+    data = get_name_and_institution_metadata(researcher, institution)
+    topic_list, graph = get_author_info_oa(data['researcher_oa_link'], researcher, institution)
+    results = {"metadata": data, "graph": graph, "list": topic_list}
   elif institution and topic:
     keywords = get_topics_from_keyword(topic)
     final_graph = {"nodes": [], "edges": []}
@@ -87,7 +86,6 @@ def initial_search():
     data = get_author_metadata(researcher)
     topic_list, graph = get_author_info_oa(data['oa_link'], data['name'], data['current_institution'])
     results = {"metadata": data, "graph": graph, "list": topic_list}
-  print(results['list'])
   return results
 
 def get_authors(institution, topic):
@@ -312,6 +310,24 @@ def get_institution_metadata(institution):
   oa_link = oa_link.replace('semopenalex', 'openalex').replace('institution', 'institutions')
   hbcu = is_HBCU(oa_link)
   return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link, "hbcu": hbcu}
+
+def get_name_and_institution_metadata(researcher, institution):
+  researcher_data = get_author_metadata(researcher)
+  institution_data = get_institution_metadata(institution)
+
+  institution_name = institution
+  researcher_name = researcher
+  institution_url = institution_data['homepage']
+  institution_oa = institution_data['oa_link']
+  researcher_oa = researcher_data['oa_link']
+  orcid = researcher_data['orcid']
+  work_count = researcher_data['work_count']
+  cited_by_count = researcher_data['cited_by_count']
+  ror = institution_data['ror']
+
+  return {"institution_name": institution_name, "researcher_name": researcher_name, "homepage": institution_url, "institution_oa_link": institution_oa, "researcher_oa_link": researcher_oa, "orcid": orcid, "work_count": work_count, "cited_by_count": cited_by_count, "ror": ror}
+
+
 
 def get_topic_metadata(topic):
    query = f"""
@@ -653,8 +669,8 @@ def get_topic_info_oa(keyword, id):
 
   for institution in autofill_inst_list:
     response = requests.get(f'https://api.openalex.org/institutions?select=display_name,topics&filter=display_name.search:{institution}', headers=headers)
-    data = response.json()
     try:
+      data = response.json()
       data = data['results'][0]
       inst_topics = data['topics']
       count = 0
