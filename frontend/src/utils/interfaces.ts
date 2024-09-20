@@ -14,5 +14,6 @@ export interface ResearchDataInterface {
   topic_clusters: string[];
   researcher_name: string;
   orcid_link: string;
+  researcher_open_alex_link: string;
   search?: 'topic' | 'researcher' | 'institution';
 }
