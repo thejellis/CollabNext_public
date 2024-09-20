@@ -1,18 +1,19 @@
 import '../styles/Search.css';
 
-import {useEffect, useState} from 'react';
-import {Circles} from 'react-loader-spinner';
-import {useSearchParams} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Circles } from 'react-loader-spinner';
+import { useSearchParams } from 'react-router-dom';
 
-import {Box, Button} from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 
 // import CytoscapeComponent from 'react-cytoscapejs';
 import GraphComponent from '../components/GraphComponent';
 import InstitutionMetadata from '../components/InstitutionMetadata';
+import InstitutionResearcherMetaData from '../components/InstitutionResearcherMetaData';
 import ResearcherMetadata from '../components/ResearcherMetadata';
 import TopicMetadata from '../components/TopicMetadata';
-import {baseUrl, initialValue} from '../utils/constants';
-import {ResearchDataInterface} from '../utils/interfaces';
+import { baseUrl, initialValue } from '../utils/constants';
+import { ResearchDataInterface } from '../utils/interfaces';
 
 const Search = () => {
   let [searchParams] = useSearchParams();
@@ -117,30 +118,42 @@ const Search = () => {
             console.log(error);
           });
       } else {
-        // fetch(`${baseUrl}/initial-search`, {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify({
-        //     organization: universityName,
-        //     type: institutionType,
-        //     topic: topicType,
-        //     researcher: researcherType,
-        //   }),
-        // })
-        //   .then((res) => res.json())
-        //   .then((data) => {
-        //     console.log(data);
-        //     setData({
-        //     });
-        //     setIsLoading(false);
-        //   })
-        //   .catch((error) => {
-        //     setIsLoading(false);
-        //     setData(initialValue);
-        //     console.log(error);
-        //   });
+        fetch(`${baseUrl}/initial-search`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            organization: universityName,
+            type: institutionType,
+            topic: topicType,
+            researcher: researcherType,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            setData({
+              ...initialValue,
+              graph: data?.graph,
+              topics: data?.list,
+              institution_url: data?.metadata?.homepage,
+              institution_name: data?.metadata?.institution_name,
+              researcher_name: data?.metadata?.researcher_name,
+              orcid_link: data?.metadata?.orcid,
+              works_count: data?.metadata?.work_count,
+              cited_count: data?.metadata?.cited_by_count,
+              ror_link: data?.metadata?.ror,
+              open_alex_link: data?.metadata?.institution_oa_link,
+              researcher_open_alex_link: data?.metadata?.researcher_oa_link,
+            });
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            setIsLoading(false);
+            setData(initialValue);
+            console.log(error);
+          });
       }
     } else {
       setIsLoading(true);
@@ -193,7 +206,7 @@ const Search = () => {
           onChange={(e) => setInstitutionType(e.target.value)}
           className='dropdown'
         >
-          <option value='Education'>Education</option>
+          <option value='Education'>HBCU</option>
         </select>
         {/* <FormControl isInvalid={topicType && !researcherType ? true : false}> */}
         <input
@@ -254,12 +267,16 @@ const Search = () => {
           </div>
         ) : (
           <div>
-            {data?.search === 'institution' ? (
-              <InstitutionMetadata data={data} />
-            ) : data?.search === 'topic' ? (
-              <TopicMetadata data={data} />
+            {data?.search ? (
+              data?.search === 'institution' ? (
+                <InstitutionMetadata data={data} />
+              ) : data?.search === 'topic' ? (
+                <TopicMetadata data={data} />
+              ) : (
+                <ResearcherMetadata data={data} />
+              )
             ) : (
-              <ResearcherMetadata data={data} />
+              <InstitutionResearcherMetaData data={data} />
             )}
           </div>
         )}

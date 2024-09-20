@@ -102,4 +102,5 @@ export const initialValue = {
   topic_clusters: [],
   researcher_name: '',
   orcid_link: '',
+  researcher_open_alex_link: '',
 };

@@ -4,7 +4,11 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 
 import { ResearchDataInterface } from '../utils/interfaces';
 
-const ResearcherMetadata = ({data}: {data: ResearchDataInterface}) => {
+const InstitutionResearcherMetaData = ({
+  data,
+}: {
+  data: ResearchDataInterface;
+}) => {
   return (
     <Flex
       display={{base: 'block', lg: 'flex'}}
@@ -15,6 +19,15 @@ const ResearcherMetadata = ({data}: {data: ResearchDataInterface}) => {
       <Box w={{lg: '34%'}}>
         <button className='topButton'>List Map</button>
         <h2>{data?.researcher_name}</h2>
+        <h2>{data?.institution_name}</h2>
+        <a
+          target='_blank'
+          rel='noreferrer'
+          className='ror'
+          href={data?.institution_url}
+        >
+          {data?.institution_url}
+        </a>
         <a
           target='_blank'
           rel='noreferrer'
@@ -23,13 +36,20 @@ const ResearcherMetadata = ({data}: {data: ResearchDataInterface}) => {
         >
           {data?.orcid_link}
         </a>
-        <a target='_blank' rel='noreferrer' href={data?.institution_url}>
-          {data?.institution_name}
-        </a>
         <p>Total {data?.works_count} works</p>
         <p>Total {data?.cited_count} citations</p>
         <a target='_blank' rel='noreferrer' href={data?.open_alex_link}>
-          View on OpenAlex
+          View Institution on OpenAlex
+        </a>
+        <a
+          target='_blank'
+          rel='noreferrer'
+          href={data?.researcher_open_alex_link}
+        >
+          View Researcher on OpenAlex
+        </a>
+        <a target='_blank' rel='noreferrer' href={data?.ror_link}>
+          View Institution ROR
         </a>
       </Box>
       <Box w={{lg: '64%'}} mt={{base: '.9rem', lg: 0}}>
@@ -64,4 +84,4 @@ const ResearcherMetadata = ({data}: {data: ResearchDataInterface}) => {
   );
 };
 
-export default ResearcherMetadata;
+export default InstitutionResearcherMetaData;
