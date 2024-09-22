@@ -27,22 +27,15 @@ def initial_search():
   type = request.json.get('type')
   topic = request.json.get('topic')
   if institution and researcher and topic:
-    keywords = get_topics_from_keyword(topic)
-    final_graph = {"nodes": [], "edges": []}
-    final_topic_data = []
-    final_works = []
-    for t in keywords:
-      works, graph = get_works(researcher, t, institution)
-      topic_data, aGraph = get_topic_metadata(t)
-      final_graph = combine_graphs(final_graph, graph)
-      if not works['titles'] == []:
-        final_works = list(set(final_works + works['titles']))
-        final_topic_data.append(topic_data)
-    institution_data, aGraph = get_institution_metadata(institution)
-    researcher_data, aGraph = get_author_metadata(researcher)
-    results = {"works": {"titles": final_works}, "institution_metadata": institution_data, "author_metadata": researcher_data, "topic_metadata": final_topic_data, "graph": final_graph}
+    data = get_institution_and_topic_and_researcher_metadata(institution, topic, researcher)
+    work_list, graph, extra_metadata = get_work_info(topic, researcher, data['topic_oa_link'], data['researcher_oa_link'])
+    data['work_count'] = extra_metadata['work_count']
+    data['cited_by_count'] = extra_metadata['cited_by_count']
+    graph['nodes'].append({ 'id': data['institution_oa_link'], 'label': institution, 'type': 'INSTIUTION' })
+    graph['edges'].append({ 'id': f"""{data['researcher_oa_link']}-{data['institution_oa_link']}""", 'start': data['researcher_oa_link'], 'end': data['institution_oa_link'], "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
+    results = {"metadata": data, "graph": graph, "list": work_list}
   elif institution and researcher:
-    data = get_name_and_institution_metadata(researcher, institution)
+    data = get_researcher_and_institution_metadata(researcher, institution)
     topic_list, graph = get_author_info_oa(data['researcher_oa_link'], researcher, institution)
     results = {"metadata": data, "graph": graph, "list": topic_list}
   elif institution and topic:
@@ -57,23 +50,14 @@ def initial_search():
       if not authors['names'] == []:
         final_authors = list(set(final_authors + authors['names']))
         final_topic_data.append(topic_data)
-      print("Topic Complete: " + str(t))
     institution_data, aGraph = get_institution_metadata(institution)
     results = {"authors": {"names": final_authors}, "institution_metadata": institution_data, "topic_metadata": final_topic_data, "graph": final_graph}
   elif researcher and topic:
-    keywords = get_topics_from_keyword(topic)
-    final_graph = {"nodes": [], "edges": []}
-    final_topic_data = []
-    final_works = []
-    for t in keywords:
-      works, graph = get_works(researcher, t, "")
-      topic_data, aGraph = get_topic_metadata(t)
-      final_graph = combine_graphs(final_graph, graph)
-      if not works['titles'] == []:
-        final_works = list(set(final_works + works['titles']))
-        final_topic_data.append(topic_data)
-    researcher_data, aGraph = get_author_metadata(researcher)
-    results = {"works": {"titles": final_works}, "author_metadata": researcher_data, "topic_metadata": final_topic_data, "graph": final_graph}
+    data = get_topic_and_researcher_metadata(topic, researcher)
+    work_list, graph, extra_metadata = get_work_info(topic, researcher, data['topic_oa_link'], data['researcher_oa_link'])
+    data['work_count'] = extra_metadata['work_count']
+    data['cited_by_count'] = extra_metadata['cited_by_count']
+    results = {"metadata": data, "graph": graph, "list": work_list}
   elif topic:
     data = get_keyword_metadata(topic)
     topic_list, graph = get_topic_info_oa(topic, data['oa_link'])
@@ -86,6 +70,7 @@ def initial_search():
     data = get_author_metadata(researcher)
     topic_list, graph = get_author_info_oa(data['oa_link'], data['name'], data['current_institution'])
     results = {"metadata": data, "graph": graph, "list": topic_list}
+  print(results['list'])
   return results
 
 def get_authors(institution, topic):
@@ -311,7 +296,7 @@ def get_institution_metadata(institution):
   hbcu = is_HBCU(oa_link)
   return {"name": institution, "ror": ror, "works_count": works_count, "cited_count": cited_count, "homepage": homepage, "author_count": author_count, 'oa_link': oa_link, "hbcu": hbcu}
 
-def get_name_and_institution_metadata(researcher, institution):
+def get_researcher_and_institution_metadata(researcher, institution):
   researcher_data = get_author_metadata(researcher)
   institution_data = get_institution_metadata(institution)
 
@@ -327,7 +312,52 @@ def get_name_and_institution_metadata(researcher, institution):
 
   return {"institution_name": institution_name, "researcher_name": researcher_name, "homepage": institution_url, "institution_oa_link": institution_oa, "researcher_oa_link": researcher_oa, "orcid": orcid, "work_count": work_count, "cited_by_count": cited_by_count, "ror": ror}
 
+def get_topic_and_researcher_metadata(topic, researcher):
+  researcher_data = get_author_metadata(researcher)
+  topic_data = get_keyword_metadata(topic)
 
+  researcher_name = researcher
+  keyword_name = topic
+  orcid = researcher_data['orcid']
+  current_org = researcher_data['current_institution']
+  work_count = researcher_data['work_count']
+  cited_by_count = researcher_data['cited_by_count']
+  topic_cluster = topic_data['topic_clusters']
+  researcher_oa = researcher_data['oa_link']
+  topic_oa = topic_data['oa_link']
+  return {"researcher_name": researcher_name, "topic_name": keyword_name, "orcid": orcid, "current_institution": current_org, "work_count": work_count, "cited_by_count": cited_by_count, "topic_clusters": topic_cluster, "researcher_oa_link": researcher_oa, "topic_oa_link": topic_oa}
+
+def get_institution_and_topic_metadata(institution, topic):
+  institution_data = get_institution_metadata(institution)
+  topic_data = get_keyword_metadata(topic)
+
+  institution_name = institution
+  keyword_name = topic
+  ror = institution_data['ror']
+  topic_cluster = topic_data['topic_clusters']
+  topic_oa = topic_data['oa_link']
+  institution_oa = institution_data['oa_link']
+  institution_url = institution_data['homepage']
+  work_count = institution_data['works_count']
+  cited_by_count = institution_data['cited_count']
+  people_count = institution_data['author_count']
+  return {"institution_name": institution_name, "topic_name": keyword_name, "work_count": work_count, "cited_by_count": cited_by_count, "ror": ror, "topic_clusters": topic_cluster, "people_count": people_count, "topic_oa_link": topic_oa, "institution_oa_link": institution_oa, "homepage": institution_url}
+
+def get_institution_and_topic_and_researcher_metadata(institution, topic, researcher):
+  institution_data = get_institution_metadata(institution)
+  topic_data = get_keyword_metadata(topic)
+  researcher_data = get_author_metadata(researcher)
+
+  institution_url = institution_data['homepage']
+  orcid = researcher_data['orcid']
+  work_count = researcher_data['work_count']
+  cited_by_count = researcher_data['cited_by_count']
+  topic_cluster = topic_data['topic_clusters']
+  topic_oa = topic_data['oa_link']
+  institution_oa = institution_data['oa_link']
+  researcher_oa = researcher_data['oa_link']
+
+  return {"institution_name": institution, "topic_name": topic, "researcher_name": researcher, "topic_oa_link": topic_oa, "institution_oa_link": institution_oa, "homepage": institution_url, "orcid": orcid, "topic_clusters": topic_cluster, "researcher_oa_link": researcher_oa, "work_count": work_count, "cited_by_count": cited_by_count}
 
 def get_topic_metadata(topic):
    query = f"""
@@ -696,8 +726,72 @@ def get_topic_info_oa(keyword, id):
   graph = {"nodes": nodes, "edges": edges}
   return topic_list, graph
 
+def get_work_info(keyword, researcher, keyword_id, researcher_id, all_institutions=True):
+  query = f"""
+  SELECT DISTINCT ?work ?name ?cited_by_count WHERE {"{"}
+  ?author <http://xmlns.com/foaf/0.1/name> "{researcher}" .
+  ?work <http://purl.org/dc/terms/creator> ?author .
+  << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
+  ?topic <https://semopenalex.org/ontology/hasKeyword> ?keyword .
+  ?keyword <http://www.w3.org/2004/02/skos/core#prefLabel> "{keyword}" .
+  ?work <http://purl.org/dc/terms/title> ?name .
+  ?work <https://semopenalex.org/ontology/citedByCount> ?cited_by_count .
+  {'}'}
+  """
+  results = query_endpoint(query)
+  work_list = []
+  for a in results:
+    work_list.append((a['work'], a['name'], int(a['cited_by_count'])))
+  final_work_list = []
+  for a in work_list:
+    final_work_list.append((a[1], a[2]))
+  final_work_list.sort(key=lambda x: x[1], reverse=True)
 
+  nodes = []
+  edges = []
 
+  # Get an author's institutions
+  if all_institutions:
+    headers = {'Accept': 'application/json'}
+    search_id = researcher_id.replace('https://openalex.org/authors/', '')
+    response = requests.get(f'https://api.openalex.org/authors/{search_id}', headers=headers)
+    data = response.json()
+    institutions = data['affiliations']
+    all_institutions = []
+    for a in institutions:
+      all_institutions.append((a['institution']['display_name'], a['institution']['id']))
+    for a, i in all_institutions:
+      nodes.append({ 'id': i, 'label': a, 'type': 'INSTIUTION' })
+      edges.append({ 'id': f"""{researcher_id}-{i}""", 'start': researcher_id, 'end': i, "label": "hasAffiliation", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
+
+  nodes.append({ 'id': researcher_id, 'label': researcher, 'type': 'AUTHOR' })
+  nodes.append({ 'id': keyword_id, 'label': keyword, 'type': 'TOPIC' })
+  edges.append({ 'id': f"""{researcher_id}-{keyword_id}""", 'start': researcher_id, 'end': keyword_id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC"})
+  cited_by_count = 0
+  for id, w, c in work_list:
+    cited_by_count = cited_by_count + c
+    if not c == 0:
+      nodes.append({ 'id': id, 'label': w, 'type': 'WORK' })
+      nodes.append({'id': c, 'label': c, 'type': "NUMBER"})
+      edges.append({ 'id': f"""{researcher_id}-{id}""", 'start': researcher_id, 'end': id, "label": "authored", "start_type": "AUTHOR", "end_type": "WORK"})
+      edges.append({ 'id': f"""{id}-{c}""", 'start': id, 'end': c, "label": "citedBy", "start_type": "WORK", "end_type": "NUMBER"})
+  graph = {"nodes": nodes, "edges": edges}
+  return final_work_list, graph, {"work_count": len(final_work_list), "cited_by_count": cited_by_count}
+
+def get_institution_topic_info(institution, topic):
+  query = """
+  SELECT DISTINCT ?author (GROUP_CONCAT(DISTINCT ?work; SEPARATOR=", ") AS ?works) WHERE {
+  ?institution <http://xmlns.com/foaf/0.1/name> "Fisk University" .
+  ?author <http://www.w3.org/ns/org#memberOf> ?institution .
+  ?work <http://purl.org/dc/terms/creator> ?author .
+  ?keyword a <https://semopenalex.org/ontology/Keyword> .
+  ?keyword <http://www.w3.org/2004/02/skos/core#prefLabel> "Computer Vision" .
+  ?topic <https://semopenalex.org/ontology/hasKeyword> ?keyword .
+  << ?work <https://semopenalex.org/ontology/hasTopic> ?topic >> ?p ?o .
+  }
+  GROUP BY ?author
+  """
+  pass
 
 def get_keyword_metadata(keyword):
   associated_topics = get_topics_from_keyword(keyword)
