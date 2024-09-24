@@ -79,7 +79,7 @@ const AllThreeMetadata = ({data}: {data: ResearchDataInterface}) => {
           </Box>
           <Box w='26%'>
             <Text fontSize={'18px'} fontWeight={600}>
-              No of people
+              No of citations
             </Text>
             <Box mt='.5rem'>
               {data?.works?.map((topic) => (

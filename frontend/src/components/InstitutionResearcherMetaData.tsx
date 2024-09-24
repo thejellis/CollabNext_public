@@ -69,7 +69,7 @@ const InstitutionResearcherMetaData = ({
           </Box>
           <Box w='26%'>
             <Text fontSize={'18px'} fontWeight={600}>
-              No of people
+              No of works
             </Text>
             <Box mt='.5rem'>
               {data?.topics?.map((topic) => (
