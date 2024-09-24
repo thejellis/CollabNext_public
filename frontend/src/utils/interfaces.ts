@@ -20,6 +20,7 @@ export interface ResearchDataInterface {
   topics: string[][];
   works: string[][];
   organizations: string[][];
+  authors: string[][];
   topic_name: string;
   topic_clusters: string[];
   researcher_name: string;

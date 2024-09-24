@@ -99,6 +99,7 @@ export const initialValue = {
   topics: [],
   works: [],
   organizations: [],
+  authors: [],
   topic_name: '',
   topic_clusters: [],
   researcher_name: '',
