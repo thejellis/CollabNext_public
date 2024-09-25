@@ -16,7 +16,7 @@ az webapp config set --resource-group $RESOURCE_GROUP_NAME --name $APP_SERVICE_N
 sleep 5
 
 rm -rf backend/build
-cp startup.txt backend
+rm -rf backend/.venv
 cd frontend
 npm install --legacy-peer-deps
 npm install @memgraph/orb
