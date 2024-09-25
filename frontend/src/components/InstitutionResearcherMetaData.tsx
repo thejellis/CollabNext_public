@@ -49,7 +49,8 @@ const InstitutionResearcherMetaData = ({
           View Researcher on OpenAlex
         </a>
         <a target='_blank' rel='noreferrer' href={data?.ror_link}>
-          View Institution ROR
+          RORID -{' '}
+          {data?.ror_link?.split('/')[data?.ror_link?.split('/')?.length - 1]}
         </a>
       </Box>
       <Box w={{lg: '64%'}} mt={{base: '.9rem', lg: 0}}>
@@ -68,7 +69,7 @@ const InstitutionResearcherMetaData = ({
           </Box>
           <Box w='26%'>
             <Text fontSize={'18px'} fontWeight={600}>
-              No of people
+              No of works
             </Text>
             <Box mt='.5rem'>
               {data?.topics?.map((topic) => (

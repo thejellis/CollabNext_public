@@ -97,10 +97,13 @@ export const initialValue = {
   open_alex_link: '',
   is_hbcu: false,
   topics: [],
+  works: [],
   organizations: [],
+  authors: [],
   topic_name: '',
   topic_clusters: [],
   researcher_name: '',
   orcid_link: '',
   researcher_open_alex_link: '',
+  topic_open_alex_link: '',
 };
