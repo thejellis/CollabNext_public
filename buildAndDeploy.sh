@@ -1,7 +1,7 @@
 # Change these values to the ones used to create the App Service.
 SUBSCRIPTION=0bdb7994-618e-43ab-9dc4-e5510263d104
 RESOURCE_GROUP_NAME='collabnext_alpha'
-APP_SERVICE_NAME='collabnext_alpha'
+APP_SERVICE_NAME='collabnext'
 
 az login
 az webapp up --runtime PYTHON:3.9 --sku B1 --logs
