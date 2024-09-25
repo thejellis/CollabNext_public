@@ -17,10 +17,12 @@ sleep 5
 
 rm -rf backend/build
 rm -rf backend/.venv
+rm -rf backend/__pycache__
 cd frontend
 npm install --legacy-peer-deps
 npm install @memgraph/orb
 npm run build
+mkdir ../backend/build
 cp -r build/* ../backend/build
 cd ..
 
