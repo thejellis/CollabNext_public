@@ -62,7 +62,6 @@ def initial_search():
     data = get_author_metadata(researcher)
     topic_list, graph = get_author_info_oa(data['oa_link'], data['name'], data['current_institution'])
     results = {"metadata": data, "graph": graph, "list": topic_list}
-  print(results['list'])
   return results
 
 def get_authors(institution, topic):
@@ -632,7 +631,7 @@ def get_topics_oa(ror, name, id):
       else:
         final_keyword_count[key] = final_topic_count[x]
   # Sorting the dictionary by values in descending order
-  sorted_keywords = sorted(final_keyword_count.items(), key=lambda x: x[1], reverse=True)
+  sorted_keywords = sorted([(k, v) for k, v in final_keyword_count.items() if v > 5], key=lambda x: x[1], reverse=True)
   # Printing the sorted keywords and their values
 
   # Make the graph
