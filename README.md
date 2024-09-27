@@ -33,9 +33,9 @@ https://techcommunity.microsoft.com/t5/apps-on-azure-blog/deploying-react-spa-an
 `npm install --legacy-peer-deps`<br>
 `npm install @memgraph/orb` <br>
 
-Create `.env.local` file in the outermost folder level (in the collabnext_alpha folder), copy everthing in `.env.example` and paste in the`.env.local` file
+Create `.env.local` file in the frontend folder, copy everthing in `.env.example` and paste in the`.env.local` file
 
-6. Run React app locally<br>
+1. Run React app locally<br>
  To run the React application locally, you need to execute the start command
 
    `npm start`
