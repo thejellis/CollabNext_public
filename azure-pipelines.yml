@@ -64,7 +64,7 @@ stages:
         source antenv/bin/activate
         python -m pip install --upgrade pip
         pip install setup
-        pip install -r requirements.txt
+        pip install -r $(System.DefaultWorkingDirectory)/backend/requirements.txt
         rm -rf $(System.DefaultWorkingDirectory)/backend
         mkdir $(System.DefaultWorkingDirectory)/backend
         cp -r $(System.DefaultWorkingDirectory)/frontend/build/* $(System.DefaultWorkingDirectory)/backend/build
