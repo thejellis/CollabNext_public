@@ -378,6 +378,18 @@
       "image": "/assets/pictures/team_members/ikechukwu_mgbemele.webp"
     },
     {
+      "firstName": "Netra",
+      "lastName": "Nyaupane",
+      "email": "nyaupanenetrap@gmail.com",
+      "institutionalAffiliation": "Fisk University",
+      "role": "Student",
+      "biosketch": "Netra Nyaupane is an aspiring Software Engineer and a Computer Science major at Fisk University, known for his strong foundation in full-stack development, data structures, and algorithms. He has demonstrated hands-on experience in building scalable web applications using technologies like Python, JavaScript, React, Node.js, and MongoDB, and has a solid understanding of cloud services such as AWS and Azure. Netra’s ability to design, develop, and deploy software solutions is evident through projects like a real-time chat application and a student networking platform. As a Fisk Executive Leadership Scholar, he has not only excelled academically but also shown a passion for solving complex problems. Netra is eager to apply his technical skills and continue growing in a collaborative, fast-paced tech environment.",
+      "linkedin": "https://www.linkedin.com/in/netra-nyaupane-3b4b89248/",
+      "github": "github.com/nyaupane-netra",
+      "website": "https://netra-nyaupane.tech/",
+      "image": "/assets/pictures/team_members/netra_nyaupane.webp"
+    },
+    {
       "firstName": "Robert",
       "lastName": "Briggs Jr.",
       "email": "robert.briggs@morehouse.edu",
