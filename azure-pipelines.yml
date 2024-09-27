@@ -54,7 +54,7 @@ stages:
       inputs:
         workingDir: '$(System.DefaultWorkingDirectory)/frontend'
         command: 'custom'
-        customCommand: 'run build'
+        customCommand: 'run build:production'
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '$(pythonVersion)'
