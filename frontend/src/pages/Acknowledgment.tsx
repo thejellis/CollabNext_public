@@ -9,6 +9,7 @@ const PersonCard = React.lazy(() => import('../components/PersonCard'));
 const leadershipData = team_members.leadership;
 const advisoryData = team_members.advisory;
 const studentsData = team_members.students;
+const partner_Data = team_members.partnershipData;
 
 const AcknowledgementsPage: React.FC = () => {
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
@@ -46,6 +47,7 @@ const AcknowledgementsPage: React.FC = () => {
             desc: 'We are fortunate to have a strong and diverse group of people working on this Alpha_Deliverables_20240820.docx project and contributing to software development, data analytics, project management, and more.',
             data: studentsData,
           },
+
         ].map(({name, desc, data}, i) => (
           <Box mb={i !== 2 ? '1.8rem' : undefined}>
             <Text fontSize='20px' color='#000000' fontWeight={'bold'}>
@@ -85,9 +87,37 @@ const AcknowledgementsPage: React.FC = () => {
             </div>
           </Box>
         ))}
+
+
+        {/* Partnership Section */}
+        <div>
+          <h1 style={{ fontWeight: 'bold', fontSize: '20px', marginTop: 30 }}>Partnership Team</h1>
+          <h1 style={{ fontSize: '17px', marginBottom: 20 }}>
+            Our Partnership Team is committed to fostering innovative, strategic collaborations that drive mutual growth, leveraging expertise and tailored solutions for long-term success.
+          </h1>
+
+
+          <div style={{ gap: '20px' }}>
+            {partner_Data.map((partner, index) => (
+              <div key={index} style={{ fontSize: '16px' }}>
+                <div style={{fontWeight: 'bold', marginTop: 16}}>{partner.name}</div>
+                <div>
+                  <a style={{color:'#005ce6'}} href={partner.website} target="_blank" rel="noopener noreferrer">
+                    {partner.website}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+
+
       </div>
     </div>
   );
 };
 
 export default AcknowledgementsPage;
+//Finished acknowledgement page

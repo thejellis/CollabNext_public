@@ -449,5 +449,36 @@
       "website": "",
       "image": "/assets/pictures/team_members/keller_smith.webp"
     }
+  ],
+  "partnershipData": [
+    {
+      "name": "AUC Data Sci. Initiative",
+      "website": "https://aucenter.edu/category/data-science/"
+    },
+    {
+      "name": "Metaphacts",
+      "website": "https://metaphacts.com/"
+    },
+    {
+      "name": "MUP",
+      "website": "https://mupcenter.org/"
+    },
+    {
+      "name": "OurResearch/OpenAlex",
+      "website": "http://ourresearch.org/"
+    },
+    {
+      "name": "RENCI",
+      "website": "https://renci.org/"
+    },
+    {
+      "name": "system.com",
+      "website": "https://www.system.com/"
+    },
+    {
+      "name": "TDP Data Systems",
+      "website": "https://www.decisionplatform.io/B8"
+    }
   ]
-}
+} 
+
