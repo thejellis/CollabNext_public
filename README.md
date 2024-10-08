@@ -48,4 +48,4 @@ System Settings > General > AirDrop & Handoff > turn off AirPlay Receiver
 
 ## Contact Information
 
-Contact Lew Lefton collabnext.okn@gmail.com for any more questions about the project
+Contact Lew Lefton (collabnext.okn@gmail.com) for any more questions about this project. 
