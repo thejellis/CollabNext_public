@@ -43,3 +43,9 @@ Create `.env.local` file in the frontend folder, copy everthing in `.env.example
 
 Note: If you are having some trouble with the ports on Mac, try:
 System Settings > General > AirDrop & Handoff > turn off AirPlay Receiver
+
+**
+
+## Contact Information
+
+Contact Lew Lefton collabnext.okn@gmail.com for any more questions about the project
