@@ -8,7 +8,7 @@ trigger:
 
 variables:
   # Azure Resource Manager connection created during pipeline creation
-  azureServiceConnectionId: '7b5b2d6d-2278-4baf-8f4b-649ba1c862c3'
+  azureServiceConnectionId: '<YOUR_AZURE_SERVICE_CONNECTION_ID>'
 
   # Web app name
   webAppName: 'collabnext'
