@@ -452,32 +452,53 @@
   ],
   "partnershipData": [
     {
-      "name": "AUC Data Sci. Initiative",
-      "website": "https://aucenter.edu/category/data-science/"
+      "name": "AUC Data Sci.Initiative",
+      "website": "https://aucenter.edu/category/data-science/",
+      "ppp": "/assets/ppp/cropped-AUCClogo_art2-122x122.png",
+      "width": "90px",
+      "height": "90px"
     },
     {
       "name": "Metaphacts",
-      "website": "https://metaphacts.com/"
+      "website": "https://metaphacts.com/",
+      "ppp": "/assets/ppp/logo.svg",
+      "width": "120px",
+      "height": "100px"
     },
     {
-      "name": "MUP",
-      "website": "https://mupcenter.org/"
+      "name": "MUP ",
+      "website": "https://mupcenter.org/",
+      "ppp": "/assets/ppp/mup-logo-final-horiz-web-1024x251.png",
+      "width": "250px",
+      "height": "60px"
     },
     {
-      "name": "OurResearch/OpenAlex",
-      "website": "http://ourresearch.org/"
+      "name": "OurResearch / OpenAlex",
+      "website": "http://ourresearch.org/",
+      "ppp": "/assets/ppp/ourresearch_logo.ed1d8a71.png",
+      "width": "230px",
+      "height": "50px"
     },
     {
-      "name": "RENCI",
-      "website": "https://renci.org/"
+      "name": "Renci",
+      "website": "https://renci.org/",
+      "ppp": "/assets/ppp/renci-logo.png",
+      "width": "120px",
+      "height": "70px"
     },
     {
       "name": "system.com",
-      "website": "https://www.system.com/"
+      "website": "https://www.system.com/",
+      "ppp": "/assets/ppp/system.png",
+      "width": "160px",
+      "height": "70px"
     },
     {
       "name": "TDP Data Systems",
-      "website": "https://www.decisionplatform.io/B8"
+      "website": "https://www.decisionplatform.io/B8",
+      "ppp": "/assets/ppp/DataSystems.png",
+      "width": "130px",
+      "height": "70px"
     }
   ]
 } 

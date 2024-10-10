@@ -89,28 +89,53 @@ const AcknowledgementsPage: React.FC = () => {
         ))}
 
 
-        {/* Partnership Section */}
-        <div>
-          <h1 style={{ fontWeight: 'bold', fontSize: '20px', marginTop: 30 }}>Partnership Team</h1>
-          <h1 style={{ fontSize: '17px', marginBottom: 20 }}>
-            Our Partnership Team is committed to fostering innovative, strategic collaborations that drive mutual growth, leveraging expertise and tailored solutions for long-term success.
-          </h1>
+       
 
+      {/* Partner Section */}
+<div>
+  <h1 style={{ fontWeight: 'bold', fontSize: '20px', marginTop: 30 }}>Partnership Team</h1>
+  <h1 style={{ fontSize: '17px', marginBottom: 20 }}>
+    Our Partnership Team is committed to fostering innovative, strategic collaborations that drive mutual growth, leveraging expertise and tailored solutions for long-term success.
+  </h1>
 
-          <div style={{ gap: '20px' }}>
-            {partner_Data.map((partner, index) => (
-              <div key={index} style={{ fontSize: '16px' }}>
-                <div style={{fontWeight: 'bold', marginTop: 16}}>{partner.name}</div>
-                <div>
-                  <a style={{color:'#005ce6'}} href={partner.website} target="_blank" rel="noopener noreferrer">
-                    {partner.website}
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-
+  <div 
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, 1fr)', // 3 columns
+      gap: '20px' // space between the cards
+    }}
+  >
+    {partner_Data.map((partner, index) => (
+      <div key={index} style={{ fontSize: '16px', marginBottom: '20px' }}>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+         
+          <img 
+              src={partner.ppp} 
+              alt={`${partner.name} logo`} 
+              style={{ 
+                width: partner.width || 'auto',  
+                height: partner.height || 'auto', 
+                marginTop: '10px' 
+              }} 
+            />
+        
+          {/* Website Link (Earth Icon) */}
+          <div style={{ fontWeight: 'bold', marginTop: 1 }}>{partner.name}</div>
+          <a href={partner.website} target="_blank" rel="noopener noreferrer" style={{ marginTop: '10px' }}>
+            <img 
+              src="/assets/ppp/icons8-earth-24.png" 
+              alt="Visit website" 
+              style={{ width: '24px', height: '24px' }}
+            />
+          </a>
         </div>
+      </div>
+    ))}
+  </div>
+</div>
+
+
 
 
 
