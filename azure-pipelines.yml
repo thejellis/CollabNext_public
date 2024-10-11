@@ -8,7 +8,7 @@ trigger:
 
 variables:
   # Azure Resource Manager connection created during pipeline creation
-  azureServiceConnectionId: '<YOUR_AZURE_SERVICE_CONNECTION_ID>'
+  azureServiceConnectionId: 'nsf-cloudbank-azure-connection'
 
   # Web app name
   webAppName: 'collabnext'
