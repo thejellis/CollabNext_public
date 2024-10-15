@@ -12,10 +12,11 @@ import GraphComponent from '../components/GraphComponent';
 import InstitutionMetadata from '../components/InstitutionMetadata';
 import InstitutionResearcherMetaData from '../components/InstitutionResearcherMetaData';
 import ResearcherMetadata from '../components/ResearcherMetadata';
+import Suggested from '../components/Suggested';
 import TopicInstitutionMetadata from '../components/TopicInstitutionMetadata';
 import TopicMetadata from '../components/TopicMetadata';
 import TopicResearcherMetadata from '../components/TopicResearcherMetadata';
-import { baseUrl, initialValue } from '../utils/constants';
+import { baseUrl, handleAutofill, initialValue } from '../utils/constants';
 import { ResearchDataInterface, SearchType } from '../utils/interfaces';
 
 const Search = () => {
@@ -32,8 +33,12 @@ const Search = () => {
   const [researcherType, setResearcherType] = useState(researcher || '');
   const [data, setData] = useState<ResearchDataInterface>(initialValue);
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestedInstitutions, setSuggestedInstitutions] = useState([]);
+  const [suggestedTopics, setSuggestedTopics] = useState([]);
 
   // const toast = useToast();
+
+
 
   const handleToggle = () => {
     setIsNetworkMap(!isNetworkMap);
@@ -230,19 +235,29 @@ const Search = () => {
         <input
           type='text'
           value={universityName}
-          onChange={(e) => setUniversityName(e.target.value)}
+          list='institutions'
+          onChange={(e) => {
+            setUniversityName(e.target.value)
+            handleAutofill(e.target.value, false, setSuggestedTopics, setSuggestedInstitutions);
+          }}
           placeholder='University Name'
           className='textbox'
           disabled={isLoading}
         />
+        <Suggested suggested={suggestedInstitutions} institutions={true} />
         <input
           type='text'
           value={topicType}
-          onChange={(e) => setTopicType(e.target.value)}
+          onChange={(e) => {
+            setTopicType(e.target.value)
+            handleAutofill(e.target.value, false, setSuggestedTopics, setSuggestedInstitutions);
+          }}
+          list='topics'
           placeholder='Type Topic'
           className='textbox'
           disabled={isLoading}
         />
+        <Suggested suggested={suggestedTopics} institutions={false} />
         <select
           value={institutionType}
           onChange={(e) => setInstitutionType(e.target.value)}
