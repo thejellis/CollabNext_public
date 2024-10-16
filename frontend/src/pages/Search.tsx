@@ -38,8 +38,6 @@ const Search = () => {
 
   // const toast = useToast();
 
-
-
   const handleToggle = () => {
     setIsNetworkMap(!isNetworkMap);
   };
@@ -237,8 +235,13 @@ const Search = () => {
           value={universityName}
           list='institutions'
           onChange={(e) => {
-            setUniversityName(e.target.value)
-            handleAutofill(e.target.value, false, setSuggestedTopics, setSuggestedInstitutions);
+            setUniversityName(e.target.value);
+            handleAutofill(
+              e.target.value,
+              false,
+              setSuggestedTopics,
+              setSuggestedInstitutions,
+            );
           }}
           placeholder='University Name'
           className='textbox'
@@ -249,8 +252,13 @@ const Search = () => {
           type='text'
           value={topicType}
           onChange={(e) => {
-            setTopicType(e.target.value)
-            handleAutofill(e.target.value, false, setSuggestedTopics, setSuggestedInstitutions);
+            setTopicType(e.target.value);
+            handleAutofill(
+              e.target.value,
+              true,
+              setSuggestedTopics,
+              setSuggestedInstitutions,
+            );
           }}
           list='topics'
           placeholder='Type Topic'
