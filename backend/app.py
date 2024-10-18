@@ -42,15 +42,14 @@ def initial_search():
   """
   institution = request.json.get('organization')
   researcher = request.json.get('researcher')
+  researcher = researcher.title()
   type = request.json.get('type')
   topic = request.json.get('topic')
   if institution and researcher and topic:
     data = get_institution_and_topic_and_researcher_metadata(institution, topic, researcher)
-    work_list, graph, extra_metadata = list_given_researcher_topic(topic, researcher, data['topic_oa_link'], data['researcher_oa_link'])
+    work_list, graph, extra_metadata = list_given_researcher_topic(topic, researcher, institution, data['topic_oa_link'], data['researcher_oa_link'], data['institution_oa_link'])
     data['work_count'] = extra_metadata['work_count']
     data['cited_by_count'] = extra_metadata['cited_by_count']
-    graph['nodes'].append({ 'id': data['institution_oa_link'], 'label': institution, 'type': 'INSTIUTION' })
-    graph['edges'].append({ 'id': f"""{data['researcher_oa_link']}-{data['institution_oa_link']}""", 'start': data['researcher_oa_link'], 'end': data['institution_oa_link'], "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
     results = {"metadata": data, "graph": graph, "list": work_list}
   elif institution and researcher:
     data = get_researcher_and_institution_metadata(researcher, institution)
@@ -64,13 +63,14 @@ def initial_search():
     results = {"metadata": data, "graph": graph, "list": topic_list}
   elif researcher and topic:
     data = get_topic_and_researcher_metadata(topic, researcher)
-    work_list, graph, extra_metadata = list_given_researcher_topic(topic, researcher, data['topic_oa_link'], data['researcher_oa_link'])
+    work_list, graph, extra_metadata = list_given_researcher_topic(topic, researcher, data['current_institution'], data['topic_oa_link'], data['researcher_oa_link'], data['institution_oa_link'])
     data['work_count'] = extra_metadata['work_count']
     data['cited_by_count'] = extra_metadata['cited_by_count']
     results = {"metadata": data, "graph": graph, "list": work_list}
   elif topic:
     data = get_subfield_metadata(topic)
-    topic_list, graph = list_given_topic(topic, data['oa_link'])
+    topic_list, graph, extra_metadata = list_given_topic(topic, data['oa_link'])
+    data['work_count'] = extra_metadata['work_count']
     results = {"metadata": data, "graph": graph, "list": topic_list}
   elif institution:
     data = get_institution_metadata(institution)
@@ -214,7 +214,8 @@ def get_topic_and_researcher_metadata(topic, researcher):
   topic_cluster = topic_data['topic_clusters']
   researcher_oa = researcher_data['oa_link']
   topic_oa = topic_data['oa_link']
-  return {"researcher_name": researcher_name, "topic_name": subfield_name, "orcid": orcid, "current_institution": current_org, "work_count": work_count, "cited_by_count": cited_by_count, "topic_clusters": topic_cluster, "researcher_oa_link": researcher_oa, "topic_oa_link": topic_oa}
+  institution_oa = researcher_data['institution_url']
+  return {"researcher_name": researcher_name, "topic_name": subfield_name, "orcid": orcid, "current_institution": current_org, "work_count": work_count, "cited_by_count": cited_by_count, "topic_clusters": topic_cluster, "researcher_oa_link": researcher_oa, "topic_oa_link": topic_oa, "institution_oa_link": institution_oa}
 
 def get_institution_and_topic_metadata(institution, topic):
   """
@@ -580,6 +581,8 @@ def list_given_topic(subfield, id):
   """
   headers = {'Accept': 'application/json'}
   subfield_list = []
+  extra_metadata = {}
+  total_work_count = 0
 
   for institution in autofill_inst_list:
     response = requests.get(f'https://api.openalex.org/institutions?select=display_name,topics&filter=display_name.search:{institution}', headers=headers)
@@ -591,12 +594,14 @@ def list_given_topic(subfield, id):
       for t in inst_topics:
         if t['subfield']['display_name'] == subfield:
           count = count + t['count']
+          total_work_count = total_work_count + t['count']
       if count > 0:
         subfield_list.append((institution, count))
     except:
       continue
 
   subfield_list.sort(key=lambda x: x[1], reverse=True)
+  extra_metadata['work_count'] = total_work_count
 
   nodes = []
   edges = []
@@ -605,12 +610,12 @@ def list_given_topic(subfield, id):
     if not c == 0:
       nodes.append({ 'id': i, 'label': i, 'type': 'INSTITUTION' })
       nodes.append({'id': c, 'label': c, 'type': "NUMBER"})
-      edges.append({ 'id': f"""{id}-{i}""", 'start': id, 'end': i, "label": "researches", "start_type": "TOPIC", "end_type": "INSTITUTION"})
-      edges.append({ 'id': f"""{i}-{c}""", 'start': i, 'end': c, "label": "numResearchers", "start_type": "INSTITUTION", "end_type": "NUMBER"})
+      edges.append({ 'id': f"""{i}-{id}""", 'start': i, 'end': id, "label": "researches", "start_type": "INSTITUTION", "end_type": "TOPIC"})
+      edges.append({ 'id': f"""{i}-{c}""", 'start': i, 'end': c, "label": "number", "start_type": "INSTITUTION", "end_type": "NUMBER"})
   graph = {"nodes": nodes, "edges": edges}
-  return subfield_list, graph
+  return subfield_list, graph, extra_metadata
 
-def list_given_researcher_topic(subfield, researcher, subfield_id, researcher_id, all_institutions=True):
+def list_given_researcher_topic(subfield, researcher, institution, subfield_id, researcher_id, institution_id):
   """
   When an user searches for a researcher and topic or all three.
   Uses SemOpenAlex to retrieve the works of the researcher which relate to the subfield
@@ -651,21 +656,9 @@ def list_given_researcher_topic(subfield, researcher, subfield_id, researcher_id
 
   nodes = []
   edges = []
-
-  # Get an author's institutions
-  if all_institutions:
-    headers = {'Accept': 'application/json'}
-    search_id = researcher_id.replace('https://openalex.org/authors/', '')
-    response = requests.get(f'https://api.openalex.org/authors/{search_id}', headers=headers)
-    data = response.json()
-    institutions = data['affiliations']
-    all_institutions = []
-    for a in institutions:
-      all_institutions.append((a['institution']['display_name'], a['institution']['id']))
-    for a, i in all_institutions:
-      nodes.append({ 'id': i, 'label': a, 'type': 'INSTIUTION' })
-      edges.append({ 'id': f"""{researcher_id}-{i}""", 'start': researcher_id, 'end': i, "label": "hasAffiliation", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
-
+  print(institution_id, institution)
+  nodes.append({ 'id': institution_id, 'label': institution, 'type': 'INSTITUTION' })
+  edges.append({ 'id': f"""{researcher_id}-{institution_id}""", 'start': researcher_id, 'end': institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
   nodes.append({ 'id': researcher_id, 'label': researcher, 'type': 'AUTHOR' })
   nodes.append({ 'id': subfield_id, 'label': subfield, 'type': 'TOPIC' })
   edges.append({ 'id': f"""{researcher_id}-{subfield_id}""", 'start': researcher_id, 'end': subfield_id, "label": "researches", "start_type": "AUTHOR", "end_type": "TOPIC"})
