@@ -110,18 +110,6 @@
       "image": "/assets/pictures/team_members/leslie_collins.webp"
     },
     {
-      "firstName": "Sufyan",
-      "lastName": "Baksh",
-      "email": "sbaksh@fisk.edu",
-      "institutionalAffiliation": "Fisk University",
-      "role": "Sr. Personnel, Advisory",
-      "biosketch": "Dr. Sufyan Baksh is the Executive Director of Innovation and Distinguished Professor of Business in the Department of Business Administration at Fisk University. He was a professor at the University of Scranton, where he worked from fall 2008 until 2022. He was also the program director for three programs (social media strategies, business communication, and CAS-accelerated MBA programs) at The University of Scranton.  He received a Ph.D. in integrated marketing communication & advanced research methods from Texas Tech University. He has completed the post-doctoral bridge program in marketing and management from the Warrington College of Business at the University of Florida. He has an MBA in entrepreneurship and international business from RIT and an MBA/MMS in marketing from RIMSR, and a BA in Economics & Commerce from Jai Hind College (Mumbai, India). He is a board member of Wahed Invest Inc. and has worked for LINOpinion PR (Mumbai, India) for four years, in addition to spending more than 10 years in international Marketing and Finance. His research in marketing, communication, digital transformation, and business is published in several internationally renowned peer-reviewed journals, and he has presented at leading national and international conferences.",
-      "linkedin": "https://www.linkedin.com/in/sufyan-mohammed/",
-      "github": "",
-      "website": "",
-      "image": "/assets/pictures/team_members/sufyan_baksh.webp"
-    },
-    {
       "firstName": "Antwain",
       "lastName": "Hannibal Hamdallahi",
       "email": "aleach@fisk.edu",
@@ -132,6 +120,18 @@
       "github": "",
       "website": "",
       "image": "/assets/pictures/team_members/antwain_hannibal.webp"
+    },
+    {
+      "firstName": "Sufyan",
+      "lastName": "Baksh",
+      "email": "sbaksh@fisk.edu",
+      "institutionalAffiliation": "Fisk University",
+      "role": "Sr. Personnel, Advisory",
+      "biosketch": "Dr. Sufyan Baksh is the Executive Director of Innovation and Distinguished Professor of Business in the Department of Business Administration at Fisk University. He was a professor at the University of Scranton, where he worked from fall 2008 until 2022. He was also the program director for three programs (social media strategies, business communication, and CAS-accelerated MBA programs) at The University of Scranton.  He received a Ph.D. in integrated marketing communication & advanced research methods from Texas Tech University. He has completed the post-doctoral bridge program in marketing and management from the Warrington College of Business at the University of Florida. He has an MBA in entrepreneurship and international business from RIT and an MBA/MMS in marketing from RIMSR, and a BA in Economics & Commerce from Jai Hind College (Mumbai, India). He is a board member of Wahed Invest Inc. and has worked for LINOpinion PR (Mumbai, India) for four years, in addition to spending more than 10 years in international Marketing and Finance. His research in marketing, communication, digital transformation, and business is published in several internationally renowned peer-reviewed journals, and he has presented at leading national and international conferences.",
+      "linkedin": "https://www.linkedin.com/in/sufyan-mohammed/",
+      "github": "",
+      "website": "",
+      "image": "/assets/pictures/team_members/sufyan_baksh.webp"
     }
 
 
