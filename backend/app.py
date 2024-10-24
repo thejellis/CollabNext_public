@@ -705,7 +705,6 @@ def list_given_institution_topic(institution, institution_id, subfield, subfield
   {"}"}
   GROUP BY ?author ?name
   """
-  print(query)
   results = query_endpoint(query)
   works_list = []
   final_list = []
@@ -714,7 +713,12 @@ def list_given_institution_topic(institution, institution_id, subfield, subfield
     works_list.append((a['author'], a['name'], a['works'].count(",") + 1))
     final_list.append((a['name'], a['works'].count(",") + 1))
     work_count = work_count + a['works'].count(",") + 1
+  # Limits to authors with more than 3 works if at least 5 of these authors exist
+  final_list_check = sorted([(k, v) for k, v in final_list if v > 3], key=lambda x: x[1], reverse=True)
   final_list.sort(key=lambda x: x[1], reverse=True)
+  num_people = len(final_list)
+  if len(final_list_check) >= 5:
+    final_list = final_list_check
 
   nodes = []
   edges = []
@@ -729,7 +733,7 @@ def list_given_institution_topic(institution, institution_id, subfield, subfield
     nodes.append({ 'id': num_works, 'label': num_works, 'type': 'NUMBER' })
     edges.append({ 'id': f"""{author_id}-{num_works}""", 'start': author_id, 'end': num_works, "label": "numWorks", "start_type": "AUTHOR", "end_type": "NUMBER"})
     edges.append({ 'id': f"""{author_id}-{institution_id}""", 'start': author_id, 'end': institution_id, "label": "memberOf", "start_type": "AUTHOR", "end_type": "INSTITUTION"})
-  return final_list, {"nodes": nodes, "edges": edges}, {"num_people": len(final_list), "work_count": work_count}
+  return final_list, {"nodes": nodes, "edges": edges}, {"num_people": num_people, "work_count": work_count}
 
 #####
 # Functions for using keywords

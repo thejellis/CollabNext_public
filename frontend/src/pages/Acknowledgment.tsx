@@ -1,20 +1,58 @@
-import React, { Suspense, useState } from 'react';
+import React, {Suspense, useState} from 'react';
 
-import { Box, Text } from '@chakra-ui/react';
+import {Box, Text} from '@chakra-ui/react';
 
 import team_members from '../assets/team_members.json';
 
 const PersonCard = React.lazy(() => import('../components/PersonCard'));
 
-const leadershipData = team_members.leadership;
-const advisoryData = team_members.advisory;
-const studentsData = team_members.students;
-const partner_Data = team_members.partnershipData;
+// console.log(
+//   leadershipData.toSorted((a, b) => {
+//     if (a.lastName < b.lastName) {
+//       return -1;
+//     } else if (a.lastName > b.lastName) {
+//       return 1;
+//     } else {
+//       return 0;
+//     }
+//   }),
+// );
 
 const AcknowledgementsPage: React.FC = () => {
   const [expandedCardIndex, setExpandedCardIndex] = useState<number | null>(
     null,
   );
+
+  const leadershipData = team_members.leadership;
+  const advisoryData = team_members.advisory;
+  const studentsData = team_members.students;
+  const partner_Data = team_members.partnershipData;
+
+  const sortByLastName = (
+    data: {
+      firstName: string;
+      lastName: string;
+      email: string;
+      institutionalAffiliation: string;
+      role: string;
+      biosketch: string;
+      linkedin: string;
+      github: string;
+      website: string;
+      image: string;
+    }[],
+  ) => {
+    const sortedData = data.toSorted((a, b) => {
+      if (a.lastName < b.lastName) {
+        return -1;
+      } else if (a.lastName > b.lastName) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+    return sortedData;
+  }; // sort by sortbyLastName
 
   const handleToggleExpand = (index: number) => {
     setExpandedCardIndex(expandedCardIndex === index ? null : index);
@@ -29,7 +67,7 @@ const AcknowledgementsPage: React.FC = () => {
     <div className='bg-gray-100 min-h-screen py-12 px-4 sm:px-6 lg:px-8'>
       <div className='max-w-7xl mx-auto'>
         <h1 className='text-3xl font-bold text-gray-900 text-center mb-12'>
-          Acknowledgements
+          Our Team
         </h1>
         {[
           {
@@ -40,14 +78,13 @@ const AcknowledgementsPage: React.FC = () => {
           {
             name: 'Advisory group',
             desc: 'The Advisory Group consists of selected members of the Leadership Team as well other individuals who have a unique and valuable perspective on our project (eg HBCU faculty, underrepresented groups in STEM, etc.). The group serves as a standing focus group and supports our larger evaluation plan.',
-            data: advisoryData,
+            data: sortByLastName(advisoryData),
           },
           {
             name: 'Students',
             desc: 'We are fortunate to have a strong and diverse group of people working on this project and contributing to software development, data analytics, project management, and more.',
-            data: studentsData,
+            data: sortByLastName(studentsData),
           },
-
         ].map(({name, desc, data}, i) => (
           <Box mb={i !== 2 ? '1.8rem' : undefined}>
             <Text fontSize='20px' color='#000000' fontWeight={'bold'}>
@@ -87,46 +124,62 @@ const AcknowledgementsPage: React.FC = () => {
             </div>
           </Box>
         ))}
-        {/* patnar sction */}
+
+        {/* Partner Section */}
         <div>
-          <h1 style={{ fontWeight: 'bold', fontSize: '20px', marginTop: 30 }}>Partnership Team</h1>
-          <h1 style={{ fontSize: '15px', marginBottom: 12 }}>
-            Our external partners meet with the Leadership Team quarterly to identify collaboration opportunities within their networks, share resources (e.g., data, code, and expertise) and actively support the goals of the OKN project. They also provide advice regarding data sources and project sustainability.
+          <h1 style={{fontWeight: 'bold', fontSize: '20px', marginTop: 30}}>
+            Partnership Team
           </h1>
-          <div 
+          <h1 style={{fontSize: '17px', marginBottom: 20}}>
+            Our external partners meet with the Leadership Team quarterly to
+            identify collaboration opportunities within their networks, share
+            resources (e.g., data, code, and expertise) and actively support the
+            goals of the OKN project. They also provide advise regarding data
+            sources and project sustainability.
+          </h1>
+
+          <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '20px'
+              gridTemplateColumns: 'repeat(3, 1fr)', // 3 columns
+              gap: '20px', // space between the cards
             }}
           >
             {partner_Data.map((partner, index) => (
-              <div 
-                key={index} 
-                style={{
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  alignItems: 'center', 
-                  backgroundColor: 'white',
-                  boxShadow: '0px 0px 12px #80808061', 
-                  borderRadius: '10px', 
-                  width: '295px', 
-                  padding: '20px',
-                  textAlign: 'center'
-                }}
-              >
-                <img src={partner.ppp} alt={`${partner.name} photo`} 
-                    style={{ width: partner.width, height: partner.height, padding: partner.padding,borderRadius: '0', objectFit: 'cover', marginBottom: '10px'}} />
-                <div 
-                    style={{display: "grid", justifyContent: "space-around", alignItems: 'end',justifyItems:'center', width: '100%' ,    height: '100%'}}>
-                <div 
-                    style={{fontWeight: 600, fontSize: '1.25rem', lineHeight: '1.75rem', marginBottom: '10px', color: 'rgba(31, 41, 55, 1)',display: 'flex',alignItems: 'flex-end'}}>{partner.name}</div>
-                <div 
-                    style={{ display: 'flex', justifyContent: '', gap: '10px' , alignItems: 'flex-end'}}>
-                  <a href={partner.website} target="_blank" rel="noopener noreferrer">
-                    <img src="/assets/ppp/erth.svg" alt="wabsite" style={{ width: '17px', height: '17px' }}/>
+              <div key={index} style={{fontSize: '16px', marginBottom: '20px'}}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                  }}
+                >
+                  <img
+                    src={partner.ppp}
+                    alt={`${partner.name} logo`}
+                    style={{
+                      width: partner.width || 'auto',
+                      height: partner.height || 'auto',
+                      marginTop: '10px',
+                    }}
+                  />
+
+                  {/* Website Link (Earth Icon) */}
+                  <div style={{fontWeight: 'bold', marginTop: 1}}>
+                    {partner.name}
+                  </div>
+                  <a
+                    href={partner.website}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    style={{marginTop: '10px'}}
+                  >
+                    <img
+                      src='/assets/ppp/icons8-earth-24.png'
+                      alt='Visit website'
+                      style={{width: '24px', height: '24px'}}
+                    />
                   </a>
-                </div>
                 </div>
               </div>
             ))}

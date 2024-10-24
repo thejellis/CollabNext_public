@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 
 import { Flex, Text } from '@chakra-ui/react';
 import Terms from '../pages/Terms';
@@ -10,8 +10,8 @@ const Footer = () => {
       <Flex mx='auto'>
         {[
           {text: 'Contact Us', href: '/contact'},
-          {text: 'Help', href: '/'},
           { text: 'Terms and Conditions', href: '/terms' },
+          {text: 'Help', href: '/help'},
           {text: 'Provide Feedback', href: '/feedback'},
         ].map(({text, href}) => (
           <Text
