@@ -1,6 +1,6 @@
-import React, { Suspense, useState } from 'react';
+import React, {Suspense, useState} from 'react';
 
-import { Box, Text } from '@chakra-ui/react';
+import {Box, Text} from '@chakra-ui/react';
 
 import team_members from '../assets/team_members.json';
 
@@ -73,10 +73,7 @@ const AcknowledgementsPage: React.FC = () => {
           {
             name: 'Leadership Team',
             desc: 'The Leadership Team consists of all researchers supported by this project including the PI, Co-PIs, and Senior Personnel.',
-            data: [
-              ...leadershipData.slice(0, 3),
-              ...sortByLastName(leadershipData.slice(3)),
-            ],
+            data: leadershipData,
           },
           {
             name: 'Advisory group',
