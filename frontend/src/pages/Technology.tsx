@@ -77,32 +77,18 @@ const Technology = () => {
               designedwith a Flask/Python backend and a
               React/Typescript/Javascript frontend.
               These are both hosted on Microsoft Azure, and
-            funded with an allocation to the
+            funded with an allocation to the{', '}
             <a
               href='https://www.cloudbank.org/'
               target='_blank'
               rel='noreferrer'
               style={{ color: 'cornsilk', textDecoration: 'underline' }}
             >
-              NSF’s Cloudbank service.
-            </a>{' '}
-          </Text>
-          <Text
-            mt='.45rem'
-            lineHeight='24px'
-            color='#FFFFFF'
-            fontSize={{ base: '12px', lg: '16px' }}
-          > We have developed APIs which connect to our data sources and provide a
+              NSF’s Cloudbank service
+            </a>{'. '}
+        We have developed APIs which connect to our data sources and provide a
 standardized approach for our web application frontend to display filtered
-datasets.
-          </Text>
-          <Text
-            mt='.45rem'
-            lineHeight='24px'
-            color='#FFFFFF'
-            fontSize={{ base: '12px', lg: '16px' }}
-          >
-            Our alpha deliverable is{' '}
+datasets. Our alpha deliverable is{' '}
             <a
               href='https://github.com/OKN-CollabNext/CollabNext_public
 '
@@ -135,7 +121,7 @@ way.
             color='#FFFFFF'
             fontSize={{ base: '12px', lg: '16px' }}
           >
-Name disambiguationwill always be a challenge for us since we want to
+Name disambiguation will always be a challenge for us since we want to
 maintain a person-focused approach. In addition to the built-in algorithms used
 by OpenAlex, we are developing internal models which use more current AI and ML
 research, and which we believe will yield animprovement for all our entity
