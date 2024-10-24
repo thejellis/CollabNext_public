@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { Flex, Text } from '@chakra-ui/react';
+import Terms from '../pages/Terms';
 
 const Footer = () => {
   return (
@@ -10,7 +11,7 @@ const Footer = () => {
         {[
           {text: 'Contact Us', href: '/contact'},
           {text: 'Help', href: '/'},
-          {text: 'Terms and Conditions', href: '/'},
+          { text: 'Terms and Conditions', href: '/terms' },
           {text: 'Provide Feedback', href: '/feedback'},
         ].map(({text, href}) => (
           <Text
