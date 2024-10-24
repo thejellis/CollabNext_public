@@ -22,7 +22,7 @@
       "linkedin": "",
       "github": "",
       "website": "https://kexinrong.github.io/",
-      "image": "/assets/pictures/team_members/kexin_rong.webp" 
+      "image": "/assets/pictures/team_members/kexin_rong.webp"
 
     },
     {
@@ -35,7 +35,7 @@
       "linkedin": "https://www.linkedin.com/in/didiercontis/",
       "github": "",
       "website": "https://oit.gatech.edu/about/leadership/didiercontis",
-      "image": "/assets/pictures/team_members/didier_contis.webp" 
+      "image": "/assets/pictures/team_members/didier_contis.webp"
     },
     {
       "firstName": "Kinnis",
@@ -59,7 +59,7 @@
       "linkedin": "https://www.linkedin.com/in/chris-thomas-22aa7028/",
       "github": "",
       "website": "",
-      "image": "/assets/pictures/team_members/christopher_thomas.webp" 
+      "image": "/assets/pictures/team_members/christopher_thomas.webp"
     },
     {
       "firstName": "Lila",
@@ -133,8 +133,8 @@
       "website": "",
       "image": "/assets/pictures/team_members/antwain_hannibal.webp"
     }
-    
-    
+
+
   ],
 
   "advisory": [
@@ -150,7 +150,6 @@
       "website": "",
       "image": "/assets/pictures/team_members/sufyan_baksh.webp"
     },
-   
     {
       "firstName": "Pamela",
       "lastName": "Clark",
@@ -468,7 +467,7 @@
   ],
   "partnershipData": [
     {
-      "name": "AUC Science Initiative",
+      "name": "AUC Data Science Initiative",
       "website": "https://aucenter.edu/category/data-science/",
       "ppp": "/assets/ppp/cropped-AUCClogo_art2-122x122.png",
       "width": "90px",
@@ -524,5 +523,4 @@
       "padding" : "0px 0px"
     }
   ]
-} 
-
+}
