@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import NavbarMobile from './components/NavbarMobile';
 import About from './pages/About';
+import Technology from './pages/Technology';
 import Acknowledgment from './pages/Acknowledgment';
 import ContactUs from './pages/Contact';
 import Feedback from './pages/Feedback';
@@ -28,6 +29,7 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/about' element={<About />} />
+          <Route path='/technology' element={<Technology />} />
           <Route path='/search' element={<Search />} />
           <Route path='/topic-search' element={<TopicSearch />} />
           <Route path='/contact' element={<ContactUs />} />
