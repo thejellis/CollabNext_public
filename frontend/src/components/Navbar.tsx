@@ -36,8 +36,8 @@ const Navbar = () => {
           {text: 'Home', href: '/'},
           {text: 'About Us', href: '/about'},
           {text: 'Team', href: '/team'},
+          { text: 'Data Sources', href: '/data' },
           {text: 'Technology', href: '/technology'},
-          {text: 'Data Sources', href: '/'},
         ].map(({text, href}) => (
           <Text key={text} mr='2.5rem' color='#000000'>
             <Link to={href}>{text}</Link>
@@ -45,7 +45,7 @@ const Navbar = () => {
         ))}
       </Flex>
       <Text fontSize='20px' color='#000000'>
-        Account
+
       </Text>
     </Flex>
   );

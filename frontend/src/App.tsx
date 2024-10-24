@@ -15,6 +15,9 @@ import Help from './pages/Help';
 import Home from './pages/Home';
 import Search from './pages/Search';
 import TopicSearch from './pages/TopicSearch';
+import Feedback from './pages/Feedback';
+import DataSources from './pages/DataSources';
+import Terms from './pages/Terms';
 
 function App() {
   return (
@@ -34,7 +37,9 @@ function App() {
           <Route path='/topic-search' element={<TopicSearch />} />
           <Route path='/contact' element={<ContactUs />} />
           <Route path='/team' element={<Acknowledgment />} />
-          <Route path='/feedback' element={<Feedback />} />
+          <Route path='/feedback' element={<Feedback />}/>
+          <Route path='/data' element={<DataSources />} />
+          <Route path='/terms' element={<Terms />} />
           <Route path='/help' element={<Help />} />
         </Routes>
       </Box>
