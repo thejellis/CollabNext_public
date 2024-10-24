@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Box, Text } from '@chakra-ui/react';
+import {Box, Text} from '@chakra-ui/react';
 
 const About = () => {
   return (
@@ -34,27 +34,80 @@ const About = () => {
             color='#FFFFFF'
             fontSize={{base: '12px', lg: '16px'}}
           >
-            Our proof-of-concept{' '}
+            The{' '}
             <a
-              href='https://gt-msi-diversifind.azuremicroservices.io/'
+              href='https://collabnext.io/'
               target='_blank'
               rel='noreferrer'
               style={{color: 'cornsilk', textDecoration: 'underline'}}
             >
               CollabNext tool
             </a>{' '}
-            originated as a partnership between Georgia Tech and the Atlanta
-            University Center, and is now being developed jointly by Fisk
-            University, Georgia Tech, Morehouse College, Texas Southern
-            University, and University at Buffalo with{' '}
+            originated as a partnership between{' '}
             <a
-              href='https://www.nsf.gov/awardsearch/advancedSearchResult?ActiveAwards=true&AwardAmount=&AwardInstrument=&AwardNumberOperator=&BooleanElement=Any&BooleanRef=All&ExpDateOperator=&Keyword=Proto-OKN&OriginalAwardDateFrom=08%2F01%2F2023&OriginalAwardDateOperator=Range&OriginalAwardDateTo=09%2F22%2F2023&PICountry=&PIFirstName=&PIId=&PILastName=&PIOrganization=&PIState=&PIZip=&ProgEleCode=223Y%2C+X289&ProgOfficer=&ProgOrganization=&ProgRefCode=&Program=&StartDateOperator=&utm_medium=email&utm_source=govdelivery'
+              href='https://www.gatech.edu/'
               target='_blank'
               rel='noreferrer'
               style={{color: 'cornsilk', textDecoration: 'underline'}}
             >
-              support from the NSF TIP Directorate.
+              Georgia Tech
+            </a>{' '}
+            and the Atlanta University Center, and is now being developed
+            jointly by{' '}
+            <a
+              href='https://www.fisk.edu/'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Fisk University
             </a>
+            ,{' '}
+            <a
+              href='https://www.gatech.edu/'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Georgia Tech
+            </a>
+            ,{' '}
+            <a
+              href='https://morehouse.edu/'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Morehouse College
+            </a>
+            ,{' '}
+            <a
+              href='https://www.tsu.edu/'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Texas Southern University
+            </a>
+            , and{' '}
+            <a
+              href='https://www.buffalo.edu/'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              University at Buffalo
+            </a>{' '}
+            with support from the{' '}
+            <a
+              href='https://www.proto-okn.net/'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Prototype Open Knowledge Network
+            </a>{' '}
+            (aka ProtoOKN) sponsored by the NSF TIP Directorate .
           </Text>
         </Box>
         <Box mt='1.7rem'>
@@ -71,10 +124,16 @@ const About = () => {
             color='#FFFFFF'
             fontSize={{base: '12px', lg: '16px'}}
           >
-            Our goal is to develop a knowledge graph based on people,
-            organizations, and research topics. We are adopting an intentional
-            design approach which initially prioritizes HBCUs and emerging
-            researchers in a deliberate eff ort to counterbalance the{' '}
+            Our goal is to{' '}
+            <Box as='span' fontWeight={'bold'} fontStyle={'italic'}>
+              develop a knowledge graph based on people, organizations, and
+              research topics.
+            </Box>{' '}
+            We are adopting an intentional design approach,{' '}
+            <Box as='span' fontWeight={'bold'} fontStyle={'italic'}>
+              initially prioritizing HBCUs and emerging researchers
+            </Box>{' '}
+            in a deliberate effort to counterbalance the{' '}
             <a
               href='https://en.wikipedia.org/wiki/Matthew_effect'
               target='_blank'
@@ -83,22 +142,28 @@ const About = () => {
             >
               Matthew effect
             </a>
-            , a naturally accumulated advantage of well - resourced research
+            , a naturally accumulated advantage of well-resourced research
             organizations.
-          </Text>
-          <Text
-            mt='.45rem'
-            lineHeight='24px'
-            color='#FFFFFF'
-            fontSize={{base: '12px', lg: '16px'}}
-          >
-            By bringing greater visibility to what and who is often rendered
+            <br />
+            <br />
+            By bringing greater visibility to those who are often rendered
             invisible in the current science system, CollabNext will facilitate
             research collaborations with HBCUs and illuminate the broader
-            research landscape. We utilize open science data sources, follow
-            human - centered design principles, and leverage state - of - the -
-            art algorithms to build a platform that will help identify existing
-            and potentially new research partnerships.
+            research landscape.
+            <br />
+            <br />
+            We utilize open science{' '}
+            <a
+              href='https://collabnext.io/data'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              data sources
+            </a>
+            , follow human-centered design principles, and leverage
+            state-of-the-art algorithms to build a platform that will help
+            identify existing and potentially new research partnerships.
           </Text>
         </Box>
         <Box mt='1.7rem'>
@@ -107,7 +172,7 @@ const About = () => {
             color='#FFFFFF'
             fontWeight={'bold'}
           >
-            Current State
+            Current State and Future Plans
           </Text>
           <Text
             mt='.45rem'
@@ -115,18 +180,7 @@ const About = () => {
             color='#FFFFFF'
             fontSize={{base: '12px', lg: '16px'}}
           >
-            The{' '}
-            <a
-              href='https://gt-msi-diversifind.azuremicroservices.io/'
-              target='_blank'
-              rel='noreferrer'
-              style={{color: 'cornsilk', textDecoration: 'underline'}}
-            >
-              current CollabNext tool
-            </a>{' '}
-            is a very rough proof-of-concept. We are developing future versions,
-            moving from alpha to beta to production over the next three years
-            thanks to funding from the NSF. We are part of the{' '}
+            Our project is being developed as part of the{' '}
             <a
               href='https://www.proto-okn.net/'
               target='_blank'
@@ -134,47 +188,103 @@ const About = () => {
               style={{color: 'cornsilk', textDecoration: 'underline'}}
             >
               Prototype Open Knowledge Network
-            </a>{' '}
-            (aka ProtoOKN).
-          </Text>
-        </Box>
-        <Box mt='1.7rem'>
-          <Text
-            fontSize={{base: '17px', lg: '24px'}}
-            color='#FFFFFF'
-            fontWeight={'bold'}
-          >
-            Data and Methodology
-          </Text>
-          <Text
-            mt='.45rem'
-            lineHeight='24px'
-            color='#FFFFFF'
-            fontSize={{base: '12px', lg: '16px'}}
-          >
-            We are currently using data from{' '}
+            </a>
+            . Our{' '}
             <a
-              href='https://explore.openalex.org/'
+              href='https://collabnext.io/technology'
               target='_blank'
               rel='noreferrer'
               style={{color: 'cornsilk', textDecoration: 'underline'}}
             >
-              OpenAlex
+              Technology
             </a>{' '}
-            (formerly Microsoft Academic Graph), the{' '}
+            and{' '}
             <a
-              href='https://mupcenter.org/'
+              href='https://collabnext.io/data'
               target='_blank'
               rel='noreferrer'
               style={{color: 'cornsilk', textDecoration: 'underline'}}
             >
-              Center for Measuring University Performance
+              Data Sources
             </a>{' '}
-            , and we will be adding other open data sources. We will also be
-            building in strong and consistent topic classification and entity
-            resolution modules. The entire project will be built on a graph
-            database with an eye toward interoperability with other ProtoOKN
-            projects.
+            are described on other pages.
+            <Box as='span' fontWeight={'bold'} fontStyle={'italic'}>
+              The current CollabNext tool is an alpha version
+            </Box>
+            . We are developing future versions, moving from beta to production
+            over the next two years. Our{' '}
+            <a
+              href='https://bit.ly/collabnext-demo'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              proof-of-concept deliverable
+            </a>
+            , which preceded the alpha version, is available for comparison.
+            <br />
+            <br />
+            The design and strategic direction of the project are guided by our{' '}
+            <a
+              href='https://collabnext.io/team'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Advisory Group
+            </a>
+            . This group consists of selected members of the{' '}
+            <a
+              href='https://collabnext.io/team'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Leadership Team
+            </a>{' '}
+            as well other individuals who have a unique and valuable perspective
+            on our project (e.g. HBCU faculty, underrepresented groups in STEM,
+            etc.). The group serve s as a standing focus group and supports our
+            larger evaluation plan.
+            <br />
+            <br />
+            We are also fortunate to have key strategic{' '}
+            <a
+              href='https://collabnext.io/team'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              Partnerships
+            </a>{' '}
+            with academic, non-profit, and corporate organizations that serve as
+            data providers , and resources with expertise. Partners meet with
+            the Leadership Team quarterly to identify collaboration
+            opportunities within their networks, share resources (e.g., data,
+            code, and expertise) and actively support the goals of the OKN
+            project.
+            <br />
+            <br />
+            We are{' '}
+            <Box as='span' fontWeight={'bold'} fontStyle={'italic'}>
+              actively seeking one or more Sustainability Partners
+            </Box>
+            . Sustainability partners are federal agencies, foundations,
+            businesses, and other organizations who are supportive of our work
+            and interested in exploring options for sustaining and improving the
+            backend knowledge graph and frontend web application, after it is
+            built and operational at the end of the performance period of the
+            NSF grant. If you are interested in discussing this or if you know
+            of others who may be interested, please{' '}
+            <a
+              href='https://collabnext.io/contact'
+              target='_blank'
+              rel='noreferrer'
+              style={{color: 'cornsilk', textDecoration: 'underline'}}
+            >
+              contact us
+            </a>
+            .
           </Text>
         </Box>
       </Box>
