@@ -6,8 +6,7 @@ import mysql.connector
 from mysql.connector import Error
 import pandas as pd
 
-app= Flask(__name__, static_folder='../frontend/public', static_url_path='/')
-
+app= Flask(__name__, static_folder='build', static_url_path='/')
 CORS(app)
 
 ## Creates lists for autofill functionality from the institution and keyword csv files
