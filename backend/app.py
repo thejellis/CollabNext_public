@@ -9,16 +9,6 @@ import pandas as pd
 app= Flask(__name__, static_folder='build', static_url_path='/')
 CORS(app)
 
-# Serve the React app for the base route and all subroutes
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-def serve_spa(path):
-    return send_from_directory(app.static_folder, 'index.html')
-
-@app.route('/static/<path:path>')
-def serve_static(path):
-    return send_from_directory('frontend/build/static', path)
-
 ## Creates lists for autofill functionality from the institution and keyword csv files
 with open('institutions.csv', 'r') as file:
     autofill_inst_list = file.read().split(',\n')
