@@ -1359,6 +1359,11 @@ def combine_graphs(graph1, graph2):
   final_edges = list({tuple(d.items()): d for d in dup_edges}.values())
   return {"nodes": final_nodes, "edges": final_edges}
 
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    return send_from_directory(app.static_folder, 'index.html')
+
 ## Main 
 if __name__ =='__main__':
   app.run()
