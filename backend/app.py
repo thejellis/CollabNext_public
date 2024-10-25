@@ -8,8 +8,7 @@ import pandas as pd
 import os
 
 app_dir = app_dir = os.path.dirname(os.path.abspath(__file__))
-os.path.join(app_dir, '..', 'frontend', 'public')
-app= Flask(__name__, static_folder='../frontend/public', static_url_path='')
+app= Flask(__name__, static_folder=os.path.join(app_dir, '..', 'frontend', 'public'), static_url_path='')
 
 CORS(app)
 
