@@ -727,8 +727,10 @@ def list_given_institution_topic(institution, institution_id, subfield, subfield
   final_list_check = sorted([(k, v) for k, v in final_list if v > 3], key=lambda x: x[1], reverse=True)
   final_list.sort(key=lambda x: x[1], reverse=True)
   num_people = len(final_list)
+  """
   if len(final_list_check) >= 5:
     final_list = final_list_check
+  """
 
   nodes = []
   edges = []
