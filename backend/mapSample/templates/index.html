@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HBCU Knowledge Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+    <style>
+        #map {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <h1>HBCU Knowledge Map</h1>
+    <form id="filter-form">
+        <label for="institution">Select Institution:</label>
+        <select id="institution" name="institution">
+            <option value="">-- Select --</option>
+            {% for inst in institutions %}
+                <option value="{{ inst.institution }}">{{ inst.institution }} ({{ inst.city }}, {{ inst.state }})</option>
+            {% endfor %}
+        </select>
+
+        <label for="city">Select City:</label>
+        <select id="city" name="city">
+            <option value="">-- Select --</option>
+            {% for city in cities %}
+                <option value="{{ city }}">{{ city }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="state">Select State:</label>
+        <select id="state" name="state">
+            <option value="">-- Select --</option>
+            {% for state in states %}
+                <option value="{{ state }}">{{ state }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="topic">Select Topic:</label>
+        <select id="topic" name="topic">
+            <option value="">-- Select Topic --</option>
+            {% for topic in topics %}
+                <option value="{{ topic }}">{{ topic }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="search-only-hbcu">
+            <input type="checkbox" id="search-only-hbcu" name="search-only-hbcu">
+            Search Only Within HBCU
+        </label>
+        <button type="button" id="submit-button">Create Map</button>
+    </form>
+
+    <div id="map"></div>
+    <div>
+        <h2>Selected Institutions</h2>
+        <ul id="search-list"></ul>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf/turf.min.js"></script>
+    <script>
+        // Load HBCU GeoJSON data from Flask
+        const hbcuData = {{ hbcu_geojson|safe }};
+
+        // Initialize the map
+        const map = L.map('map').setView([37.8, -96], 4);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Selected institutions list
+        const selectedInstitutions = [];
+
+        // Update the selected institutions list in the UI
+        function updateSearchList() {
+            const list = document.getElementById('search-list');
+            list.innerHTML = '';
+            selectedInstitutions.forEach(inst => {
+                const li = document.createElement('li');
+                li.textContent = inst;
+                list.appendChild(li);
+            });
+        }
+
+        // Add HBCU points from GeoJSON
+        const hbcuLayer = L.geoJSON(hbcuData, {
+            onEachFeature: function (feature, layer) {
+                const props = feature.properties;
+                const tooltipContent = `<strong>${props.institution}</strong><br>${props.city}, ${props.state}`;
+                layer.bindTooltip(tooltipContent);
+
+                layer.on('click', function () {
+                    if (!selectedInstitutions.includes(props.institution)) {
+                        selectedInstitutions.push(props.institution);
+                        updateSearchList();
+                    }
+                });
+            },
+            pointToLayer: function (feature, latlng) {
+                return L.circleMarker(latlng, {
+                    radius: 5,
+                    color: 'blue',
+                    fillColor: 'blue',
+                    fillOpacity: 0.7
+                });
+            }
+        }).addTo(map);
+
+        // Enable Leaflet.draw
+        const drawnItems = new L.FeatureGroup();
+        map.addLayer(drawnItems);
+
+        const drawControl = new L.Control.Draw({
+            edit: {
+                featureGroup: drawnItems
+            },
+            draw: {
+                polygon: true,
+                polyline: false,
+                rectangle: false,
+                circle: false,
+                marker: false
+            }
+        });
+        map.addControl(drawControl);
+
+        // Handle polygon creation
+        map.on(L.Draw.Event.CREATED, function (event) {
+            const layer = event.layer;
+            drawnItems.addLayer(layer);
+
+            const polygon = layer.toGeoJSON();
+
+            // Check which points are inside the polygon
+            const insideInstitutions = [];
+            hbcuLayer.eachLayer(function (pointLayer) {
+                const point = pointLayer.toGeoJSON();
+                if (turf.booleanPointInPolygon(point, polygon)) {
+                    const inst = point.properties.institution;
+                    if (!selectedInstitutions.includes(inst)) {
+                        selectedInstitutions.push(inst);
+                        insideInstitutions.push(inst);
+                    }
+                }
+            });
+
+            updateSearchList();
+
+            if (insideInstitutions.length) {
+                alert(`Added ${insideInstitutions.length} institutions from the polygon.`);
+            } else {
+                alert('No institutions found inside the drawn polygon.');
+            }
+        });
+
+        // Form submission listener
+        document.getElementById('submit-button').addEventListener('click', function () {
+            const institution = document.getElementById('institution').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const topic = document.getElementById('topic').value;
+            const onlyHBCU = document.getElementById('search-only-hbcu').checked;
+
+            console.log("Filtering map with:", institution, city, state, topic, onlyHBCU);
+        });
+    </script>
+</body>
+</html>
